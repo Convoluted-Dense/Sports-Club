@@ -137,6 +137,7 @@ Sports-Club/
 ├── frontend/
 │   ├── index.html             # Single-Page Web App (Admin Cockpit & Member Portal)
 │   ├── er_diagram.html        # Interactive visual ER diagram studio
+│   ├── presentation.html      # Interactive slide presentation deck
 │   └── er.jpeg                # High-definition ER diagram graphic
 ├── sql/
 │   ├── schema.sql             # 3NF relational schema DDL (12 tables, views, triggers)
@@ -145,16 +146,9 @@ Sports-Club/
 │   ├── sports_club.db         # SQLite relational database instance
 │   └── setup_database.ps1     # Automated PostgreSQL setup script
 ├── presentation/
-│   ├── presentation.html      # Interactive slide presentation deck
-│   ├── presentation2.pdf      # High-definition widescreen slide deck PDF
-│   ├── presentation_print.html # Print template
-│   ├── convert_presentation_to_pdf.py # Conversion utility
-│   └── presentation_slides/   # 12 Slide PNG screenshots
+│   └── presentation2.pdf      # High-definition widescreen slide deck PDF
 ├── reports/
-│   ├── Sports_Club_DBMS_Project_Report.pdf # Academic Project Report (A4 PDF)
-│   ├── project_report.html    # Academic Project Report HTML source
-│   ├── build_report.py        # Report builder & PDF compiler
-│   └── report_assets/         # High-resolution UI screenshots
+│   └── Sports_Club_DBMS_Project_Report.pdf # Academic Project Report (A4 PDF)
 ├── .gitignore                 # Git ignore rules
 ├── start.bat                  # Windows batch launcher
 ├── start.ps1                  # PowerShell launcher
