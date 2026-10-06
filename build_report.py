@@ -13,8 +13,8 @@ def get_base64_image(image_path):
     return f"data:image/{ext};base64,{data}"
 
 # Load images
-img_er_jpeg = get_base64_image("er.jpeg")
-img_er_html = get_base64_image("report_assets/05_er_diagram.png")
+img_er_slide2 = get_base64_image("report_assets/er_diagram_slide2.png")
+img_er_canvas = get_base64_image("report_assets/er_diagram_canvas_hd.png")
 img_login = get_base64_image("report_assets/01_login_screen.png")
 img_admin_dash = get_base64_image("report_assets/02_admin_dashboard.png")
 img_admin_tbl = get_base64_image("report_assets/03_admin_table_explorer.png")
@@ -32,7 +32,7 @@ html_content = f"""<!DOCTYPE html>
 <style>
   @page {{
     size: A4;
-    margin: 20mm 16mm 20mm 16mm;
+    margin: 14mm 14mm 14mm 14mm;
   }}
   
   *, *::before, *::after {{
@@ -42,11 +42,12 @@ html_content = f"""<!DOCTYPE html>
   body {{
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
     color: #1e293b;
-    line-height: 1.55;
-    font-size: 10.5pt;
+    line-height: 1.45;
+    font-size: 9.5pt;
     background: #ffffff;
     margin: 0;
     padding: 0;
+    text-align: left;
   }}
 
   /* Page breaks */
@@ -60,94 +61,101 @@ html_content = f"""<!DOCTYPE html>
     break-inside: avoid;
   }}
 
-  /* Headings */
+  /* Headings - Tight and clean */
   h1, h2, h3, h4, h5 {{
     color: #0f172a;
     font-weight: 700;
-    margin-top: 1.2em;
-    margin-bottom: 0.5em;
+    margin-top: 14px;
+    margin-bottom: 5px;
     line-height: 1.25;
+    page-break-after: avoid;
+    break-after: avoid;
   }}
 
   h1.section-title {{
-    font-size: 16pt;
-    border-bottom: 2px solid #3b82f6;
-    padding-bottom: 4px;
-    margin-top: 1.5em;
+    font-size: 13.5pt;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 3px;
+    margin-top: 16px;
+    margin-bottom: 8px;
     color: #1e3a8a;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }}
 
   h2.sub-title {{
-    font-size: 13pt;
+    font-size: 11pt;
     color: #1e40af;
-    margin-top: 1.2em;
+    margin-top: 12px;
+    margin-bottom: 5px;
     border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
   }}
 
   h3 {{
-    font-size: 11.5pt;
+    font-size: 10pt;
     color: #334155;
+    margin-top: 8px;
+    margin-bottom: 4px;
   }}
 
   p {{
     margin-top: 0;
-    margin-bottom: 0.85em;
-    text-align: justify;
+    margin-bottom: 6px;
+    text-align: left;
+    line-height: 1.45;
   }}
 
   /* Title Page */
   .title-page {{
-    height: 100vh;
+    min-height: 94vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
-    padding: 30px 10px;
+    padding: 24px 12px;
     border: 3px double #1e3a8a;
     border-radius: 4px;
     box-sizing: border-box;
   }}
 
   .tp-header {{
-    margin-top: 20px;
+    margin-top: 15px;
   }}
 
   .tp-dept {{
-    font-size: 13pt;
+    font-size: 12.5pt;
     font-weight: 700;
-    color: #475569;
-    letter-spacing: 1px;
+    color: #334155;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
   }}
 
   .tp-course {{
-    font-size: 11pt;
+    font-size: 10.5pt;
     color: #64748b;
     margin-top: 4px;
     font-weight: 600;
   }}
 
   .tp-title-box {{
-    margin: 40px 0;
-    padding: 24px 15px;
+    margin: 25px 0;
+    padding: 20px 14px;
     background: #f8fafc;
     border-top: 3px solid #2563eb;
     border-bottom: 3px solid #2563eb;
   }}
 
   .tp-title {{
-    font-size: 21pt;
+    font-size: 19pt;
     font-weight: 800;
     color: #0f172a;
     line-height: 1.25;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
   }}
 
   .tp-subtitle {{
-    font-size: 12pt;
+    font-size: 11pt;
     color: #2563eb;
     font-weight: 600;
     margin: 0;
@@ -156,62 +164,66 @@ html_content = f"""<!DOCTYPE html>
   .tp-meta-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 16px;
     text-align: left;
-    margin: 30px 20px;
-    padding: 16px;
+    margin: 20px 15px;
+    padding: 14px;
     background: #f1f5f9;
     border-radius: 8px;
   }}
 
   .tp-meta-card h4 {{
-    font-size: 9.5pt;
+    font-size: 9pt;
     text-transform: uppercase;
     color: #64748b;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     letter-spacing: 0.05em;
   }}
 
   .tp-meta-card .name {{
-    font-size: 13pt;
+    font-size: 12pt;
     font-weight: 800;
     color: #0f172a;
     margin-bottom: 2px;
   }}
 
   .tp-meta-card .sub {{
-    font-size: 10pt;
+    font-size: 9.5pt;
     color: #334155;
     font-weight: 600;
   }}
 
   .tp-footer {{
-    margin-bottom: 15px;
-    font-size: 9.5pt;
+    margin-bottom: 10px;
+    font-size: 9pt;
     color: #64748b;
     border-top: 1px solid #cbd5e1;
-    padding-top: 12px;
+    padding-top: 10px;
   }}
 
   /* Tables */
   table.report-tbl {{
     width: 100%;
     border-collapse: collapse;
-    margin: 12px 0 16px 0;
-    font-size: 9pt;
+    margin: 6px 0 10px 0;
+    font-size: 8.5pt;
+    line-height: 1.35;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
 
   table.report-tbl th, table.report-tbl td {{
     border: 1px solid #cbd5e1;
-    padding: 6px 8px;
+    padding: 4px 7px;
     text-align: left;
-    vertical-align: top;
+    vertical-align: middle;
   }}
 
   table.report-tbl th {{
     background-color: #f1f5f9;
     color: #0f172a;
     font-weight: 700;
+    font-size: 8.5pt;
   }}
 
   table.report-tbl tr:nth-child(even) {{
@@ -221,95 +233,107 @@ html_content = f"""<!DOCTYPE html>
   /* Badges & Code */
   .badge-pk {{
     display: inline-block;
-    padding: 1px 5px;
+    padding: 1px 4px;
     background: #e0e7ff;
     color: #3730a3;
-    border-radius: 4px;
-    font-size: 7.5pt;
+    border-radius: 3px;
+    font-size: 7pt;
     font-weight: 700;
     font-family: Consolas, monospace;
   }}
 
   .badge-fk {{
     display: inline-block;
-    padding: 1px 5px;
+    padding: 1px 4px;
     background: #fef3c7;
     color: #92400e;
-    border-radius: 4px;
-    font-size: 7.5pt;
+    border-radius: 3px;
+    font-size: 7pt;
     font-weight: 700;
     font-family: Consolas, monospace;
   }}
 
   code, pre {{
     font-family: Consolas, 'Courier New', monospace;
-    font-size: 8.5pt;
+    font-size: 8pt;
   }}
 
   pre.sql-box {{
     background: #0f172a;
     color: #38bdf8;
-    padding: 10px 12px;
-    border-radius: 6px;
+    padding: 6px 10px;
+    border-radius: 5px;
     overflow-x: auto;
     white-space: pre-wrap;
-    line-height: 1.35;
-    margin: 6px 0 12px 0;
+    line-height: 1.3;
+    margin: 4px 0 8px 0;
     border-left: 3px solid #38bdf8;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
 
   /* Figures */
   .fig-box {{
-    margin: 14px 0;
+    margin: 8px 0;
     text-align: center;
-    padding: 8px;
+    padding: 5px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 5px;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
 
   .fig-box img {{
     max-width: 100%;
     height: auto;
-    max-height: 380px;
+    max-height: 250px;
     border-radius: 4px;
     border: 1px solid #cbd5e1;
     display: block;
-    margin: 0 auto 6px auto;
+    margin: 0 auto 4px auto;
+  }}
+
+  .fig-box.er-hero img {{
+    max-height: 380px;
   }}
 
   .fig-caption {{
-    font-size: 8.5pt;
+    font-size: 8pt;
     font-weight: 700;
     color: #475569;
-    margin-top: 4px;
+    margin-top: 3px;
   }}
 
   /* Callout box */
   .callout {{
-    padding: 10px 14px;
+    padding: 6px 10px;
     background: #eff6ff;
-    border-left: 4px solid #3b82f6;
-    border-radius: 0 6px 6px 0;
-    margin: 10px 0;
-    font-size: 9.5pt;
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 5px 5px 0;
+    margin: 6px 0;
+    font-size: 9pt;
+    line-height: 1.4;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
 
   .callout-title {{
     font-weight: 700;
     color: #1e40af;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }}
 
   /* Lists */
   ul, ol {{
-    margin-top: 0;
-    margin-bottom: 0.85em;
-    padding-left: 20px;
+    margin-top: 2px;
+    margin-bottom: 6px;
+    padding-left: 18px;
   }}
 
   li {{
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    line-height: 1.4;
   }}
 </style>
 </head>
@@ -326,7 +350,7 @@ html_content = f"""<!DOCTYPE html>
 
   <div class="tp-title-box">
     <h1 class="tp-title">Sports Club Membership and Tournament Management System</h1>
-    <p class="tp-subtitle">Design, 3NF Relational Normalization, Implementation, and AI-Powered SQL Execution</p>
+    <p class="tp-subtitle">Relational Schema Design, 3NF Normalization, Implementation, and AI-Powered SQL Execution</p>
   </div>
 
   <div class="tp-meta-grid">
@@ -334,13 +358,13 @@ html_content = f"""<!DOCTYPE html>
       <h4>Submitted By:</h4>
       <div class="name">Sheikh Arsh Ali</div>
       <div class="sub">Roll No: <strong>25WU0102255</strong></div>
-      <div style="font-size: 9pt; color: #64748b; margin-top: 4px;">B.Tech Computer Science &amp; Engineering</div>
+      <div style="font-size: 8.5pt; color: #64748b; margin-top: 3px;">B.Tech Computer Science &amp; Engineering</div>
     </div>
     <div class="tp-meta-card">
       <h4>Faculty Supervisor:</h4>
       <div class="name">Dr. Kiran Mayee</div>
       <div class="sub">Department of Computer Science &amp; Engineering</div>
-      <div style="font-size: 9pt; color: #64748b; margin-top: 4px;">Faculty Guide &amp; Course Evaluator</div>
+      <div style="font-size: 8.5pt; color: #64748b; margin-top: 3px;">Faculty Guide &amp; Course Evaluator</div>
     </div>
   </div>
 
@@ -356,14 +380,14 @@ html_content = f"""<!DOCTYPE html>
 <!-- ========================================================================= -->
 <h1 class="section-title">Abstract</h1>
 <p>
-The <strong>Sports Club Membership and Tournament Management System</strong> is a full-stack, 3NF-compliant Relational Database Management System designed to administer multi-sport club franchises, athlete memberships, training facilities, tournament fixtures, and financial ledgers. Traditional sports management workflows suffer from pervasive data anomalies, scheduling collisions, and disconnected subscription tracking. 
+The <strong>Sports Club Membership and Tournament Management System</strong> is a full-stack, 3NF-compliant Relational Database Management System designed to administer multi-sport club franchises, athlete memberships, training facilities, tournament fixtures, and financial ledgers. Traditional sports management workflows suffer from data anomalies, scheduling collisions, and disconnected subscription tracking.
 </p>
 <p>
 To resolve these challenges, this project introduces a normalized schema consisting of exactly <strong>12 relational entities</strong> and <strong>7 pre-compiled analytical views</strong>. The database enforces strict referential integrity, domain constraints, composite primary keys, and automated triggers that prevent double-booking of sports venues and validate team sport compliance. The system is paired with a dual-role web architecture comprising an <strong>Administrator Cockpit</strong> (with an AI-powered Smart SQL Studio, dynamic table browser, and ER visualizer) and an <strong>Athlete Member Portal</strong> (offering self-service club enrollment, tactical role selection, and realistic multi-channel billing with GST tax invoice generation). Benchmark evaluations confirm zero data redundancy, complete ACID compliance, and sub-millisecond query latency across complex analytical joins.
 </p>
 
-<h1 class="section-title" style="margin-top: 25px;">Table of Contents</h1>
-<table class="report-tbl" style="margin-top: 10px;">
+<h1 class="section-title" style="margin-top: 18px;">Table of Contents</h1>
+<table class="report-tbl" style="margin-top: 6px;">
   <thead>
     <tr>
       <th style="width: 15%;">Section</th>
@@ -375,14 +399,14 @@ To resolve these challenges, this project introduces a normalized schema consist
     <tr><td><strong>1.0</strong></td><td>Introduction &amp; Problem Statement</td><td style="text-align: right;">3</td></tr>
     <tr><td><strong>2.0</strong></td><td>Project Objectives &amp; System Scope</td><td style="text-align: right;">3</td></tr>
     <tr><td><strong>3.0</strong></td><td>Hardware &amp; Software Requirements</td><td style="text-align: right;">4</td></tr>
-    <tr><td><strong>4.0</strong></td><td>Entity-Relationship (ER) Modeling</td><td style="text-align: right;">4</td></tr>
+    <tr><td><strong>4.0</strong></td><td>Entity-Relationship (ER) Modeling (Presentation Diagram)</td><td style="text-align: right;">4</td></tr>
     <tr><td><strong>5.0</strong></td><td>Relational Schema &amp; 3NF Mathematical Normalization</td><td style="text-align: right;">6</td></tr>
     <tr><td><strong>6.0</strong></td><td>Comprehensive Data Dictionary (12 Tables)</td><td style="text-align: right;">7</td></tr>
     <tr><td><strong>7.0</strong></td><td>Analytical Views &amp; Integrity Triggers</td><td style="text-align: right;">9</td></tr>
     <tr><td><strong>8.0</strong></td><td>Complex SQL Queries &amp; Benchmark Reports</td><td style="text-align: right;">10</td></tr>
-    <tr><td><strong>9.0</strong></td><td>User Interface &amp; System Demonstration</td><td style="text-align: right;">12</td></tr>
-    <tr><td><strong>10.0</strong></td><td>Conclusion &amp; Future Scope</td><td style="text-align: right;">14</td></tr>
-    <tr><td><strong>11.0</strong></td><td>References &amp; Appendix (GitHub Source &amp; Setup Guide)</td><td style="text-align: right;">15</td></tr>
+    <tr><td><strong>9.0</strong></td><td>User Interface &amp; System Demonstration</td><td style="text-align: right;">11</td></tr>
+    <tr><td><strong>10.0</strong></td><td>Conclusion &amp; Future Scope</td><td style="text-align: right;">13</td></tr>
+    <tr><td><strong>11.0</strong></td><td>References &amp; Appendix (GitHub Source &amp; Setup Guide)</td><td style="text-align: right;">13</td></tr>
   </tbody>
 </table>
 
@@ -395,7 +419,7 @@ To resolve these challenges, this project introduces a normalized schema consist
 
 <h2 class="sub-title">1.1 Background &amp; Domain Overview</h2>
 <p>
-Modern sports complexes and athletic academies manage complex operations involving diverse stakeholders, including athletes, certified coaching staff, team rosters, venue coordinators, and financial auditors. As clubs scale across multiple sports disciplines (such as Cricket, Football, Badminton, Tennis, and Swimming), managing athlete registrations, tracking recurring membership dues, and coordinating tournament fixtures becomes increasingly intractable without a centralized relational database architecture.
+Modern sports complexes and athletic academies manage complex operations involving diverse stakeholders, including athletes, certified coaching staff, team rosters, venue coordinators, and financial auditors. As clubs scale across multiple sports disciplines (such as Cricket, Football, Badminton, Tennis, and Swimming), managing athlete registrations, tracking recurring membership dues, and coordinating tournament fixtures becomes increasingly complex without a centralized relational database architecture.
 </p>
 
 <h2 class="sub-title">1.2 Problem Statement</h2>
@@ -433,8 +457,6 @@ The proposed solution implements a Third Normal Form (3NF) relational database s
 The system encompasses member registration, multi-tier subscription billing (1, 3, 6, 12 months), certified coach assignments, facility allocation, training session scheduling, tournament brackets, and match fixture outcomes. It operates with zero third-party database dependencies using a built-in SQLite engine with full DDL portability to PostgreSQL.
 </p>
 
-<div class="page-break"></div>
-
 <!-- ========================================================================= -->
 <!-- 3.0 HARDWARE & SOFTWARE REQUIREMENTS -->
 <!-- ========================================================================= -->
@@ -443,8 +465,8 @@ The system encompasses member registration, multi-tier subscription billing (1, 
 <table class="report-tbl">
   <thead>
     <tr>
-      <th style="width: 30%;">Component</th>
-      <th style="width: 70%;">Specification &amp; Environment</th>
+      <th style="width: 28%;">Component</th>
+      <th style="width: 72%;">Specification &amp; Environment</th>
     </tr>
   </thead>
   <tbody>
@@ -479,6 +501,8 @@ The system encompasses member registration, multi-tier subscription billing (1, 
   </tbody>
 </table>
 
+<div class="page-break"></div>
+
 <!-- ========================================================================= -->
 <!-- 4.0 ENTITY-RELATIONSHIP MODELING -->
 <!-- ========================================================================= -->
@@ -511,9 +535,9 @@ The system encompasses member registration, multi-tier subscription billing (1, 
 </ul>
 
 <div class="avoid-break">
-  <div class="fig-box">
-    <img src="{img_er_jpeg}" alt="Entity Relationship Diagram">
-    <div class="fig-caption">Figure 4.1: High-Definition Entity-Relationship (ER) Diagram displaying all 12 entities, attributes, and cardinality links.</div>
+  <div class="fig-box er-hero">
+    <img src="{img_er_slide2}" alt="Interactive ER Diagram from Presentation">
+    <div class="fig-caption">Figure 4.1: Entity-Relationship (ER) Architecture from Slide 2 of Presentation Deck (12 Entities, 10 Relationships, 69 Attributes).</div>
   </div>
 </div>
 
@@ -561,7 +585,7 @@ The system encompasses member registration, multi-tier subscription billing (1, 
   <br><strong>Resolution:</strong> In previous designs, member records stored membership plan fees directly, creating transitive dependency $member\_id \rightarrow plan\_id \rightarrow fee\_amount$. This was decomposed into independent relations <code>membership_plan</code> and <code>payment</code>. In all 12 relations, every determinant is a candidate superkey.
 </div>
 
-<table class="report-tbl" style="margin-top: 10px;">
+<table class="report-tbl">
   <thead>
     <tr>
       <th>Table</th>
@@ -587,7 +611,7 @@ The system encompasses member registration, multi-tier subscription billing (1, 
 <!-- ========================================================================= -->
 <h1 class="section-title">6.0 Comprehensive Data Dictionary (12 Tables)</h1>
 
-<h3 style="margin-top: 10px;">Table 1: <code>member</code></h3>
+<h3>Table 1: <code>member</code></h3>
 <table class="report-tbl">
   <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
@@ -603,75 +627,53 @@ The system encompasses member registration, multi-tier subscription billing (1, 
   </tbody>
 </table>
 
-<h3>Table 2: <code>sport</code></h3>
+<h3>Table 2: <code>sport</code> &amp; Table 3: <code>membership_plan</code></h3>
 <table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
+  <thead><tr><th>Table.Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>sport_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Unique sport discipline identifier (201, 202...)</td></tr>
-    <tr><td><code>sport_name</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>No</td><td>Sport discipline title (Cricket, Football, Tennis...)</td></tr>
+    <tr><td><code>sport.sport_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Unique sport discipline identifier (201, 202...)</td></tr>
+    <tr><td><code>sport.sport_name</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>No</td><td>Sport discipline title (Cricket, Football, Tennis...)</td></tr>
+    <tr><td><code>plan.plan_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Unique subscription tier code (101, 102, 103, 104)</td></tr>
+    <tr><td><code>plan.plan_name</code></td><td>VARCHAR(50)</td><td>—</td><td>No</td><td>Tier title (Monthly Starter, Gold Elite Pass...)</td></tr>
+    <tr><td><code>plan.duration_months</code></td><td>INTEGER</td><td>CHECK (duration_months &gt; 0)</td><td>No</td><td>Active validity duration in months (1, 3, 6, 12)</td></tr>
+    <tr><td><code>plan.fee_amount</code></td><td>DECIMAL(10,2)</td><td>CHECK (fee_amount &gt;= 0)</td><td>No</td><td>Base subscription fee rate in INR</td></tr>
   </tbody>
 </table>
 
-<h3>Table 3: <code>membership_plan</code></h3>
+<h3>Table 4: <code>facility</code> &amp; Table 5: <code>coach</code></h3>
 <table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
+  <thead><tr><th>Table.Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>plan_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Unique subscription tier code (101, 102, 103, 104)</td></tr>
-    <tr><td><code>plan_name</code></td><td>VARCHAR(50)</td><td>—</td><td>No</td><td>Tier title (Monthly Starter, Gold Elite Pass...)</td></tr>
-    <tr><td><code>duration_months</code></td><td>INTEGER</td><td>CHECK (duration_months &gt; 0)</td><td>No</td><td>Active validity duration in months (1, 3, 6, 12)</td></tr>
-    <tr><td><code>fee_amount</code></td><td>DECIMAL(10,2)</td><td>CHECK (fee_amount &gt;= 0)</td><td>No</td><td>Base subscription fee rate in INR</td></tr>
+    <tr><td><code>facility.facility_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Venue identifier (301, 302...)</td></tr>
+    <tr><td><code>facility.name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Venue name (Grand Central Arena, Court A...)</td></tr>
+    <tr><td><code>facility.type</code></td><td>VARCHAR(50)</td><td>—</td><td>No</td><td>Facility type (Stadium, Court, Pool, Ground)</td></tr>
+    <tr><td><code>facility.location</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Campus sector / location coordinates</td></tr>
+    <tr><td><code>facility.capacity</code></td><td>INTEGER</td><td>CHECK (capacity &gt; 0)</td><td>No</td><td>Maximum spectator / participant capacity</td></tr>
+    <tr><td><code>facility.status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Available','Booked','Under Maintenance')</td><td>No</td><td>Operational availability status</td></tr>
+    <tr><td><code>coach.coach_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Coach identifier (401, 402...)</td></tr>
+    <tr><td><code>coach.name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Coach full name</td></tr>
+    <tr><td><code>coach.phone</code></td><td>VARCHAR(20)</td><td>—</td><td>No</td><td>Coach contact phone number</td></tr>
+    <tr><td><code>coach.email</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>No</td><td>Coach email address</td></tr>
   </tbody>
 </table>
 
-<h3>Table 4: <code>facility</code></h3>
+<h3>Table 6: <code>club</code> &amp; Table 7: <code>club_member</code> (Bridge Junction Table)</h3>
 <table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
+  <thead><tr><th>Table.Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>facility_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Venue identifier (301, 302...)</td></tr>
-    <tr><td><code>name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Venue name (Grand Central Arena, Court A...)</td></tr>
-    <tr><td><code>type</code></td><td>VARCHAR(50)</td><td>—</td><td>No</td><td>Facility type (Stadium, Court, Pool, Ground)</td></tr>
-    <tr><td><code>location</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Campus sector / location coordinates</td></tr>
-    <tr><td><code>capacity</code></td><td>INTEGER</td><td>CHECK (capacity &gt; 0)</td><td>No</td><td>Maximum spectator / participant capacity</td></tr>
-    <tr><td><code>status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Available','Booked','Under Maintenance')</td><td>No</td><td>Current operational availability status</td></tr>
-  </tbody>
-</table>
-
-<h3>Table 5: <code>coach</code></h3>
-<table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>coach_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Coach identifier (401, 402...)</td></tr>
-    <tr><td><code>name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Coach full name</td></tr>
-    <tr><td><code>phone</code></td><td>VARCHAR(20)</td><td>—</td><td>No</td><td>Coach contact phone number</td></tr>
-    <tr><td><code>email</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>No</td><td>Coach email address</td></tr>
-  </tbody>
-</table>
-
-<h3>Table 6: <code>club</code></h3>
-<table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>club_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Franchise club identifier (501, 502...)</td></tr>
-    <tr><td><code>club_name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Club franchise name (Thunderbolts FC, Titans CC...)</td></tr>
-    <tr><td><code>sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport(sport_id)</span></td><td>No</td><td>Sport discipline assigned to club</td></tr>
-    <tr><td><code>coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach(coach_id)</span></td><td>Yes</td><td>Assigned head coach</td></tr>
-    <tr><td><code>created_date</code></td><td>DATE</td><td>DEFAULT CURRENT_DATE</td><td>No</td><td>Founding date of the club</td></tr>
-    <tr><td><code>status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Active','Inactive','Suspended')</td><td>No</td><td>Operational status of franchise</td></tr>
+    <tr><td><code>club.club_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Franchise club identifier (501, 502...)</td></tr>
+    <tr><td><code>club.club_name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Club franchise name (Thunderbolts FC, Titans CC...)</td></tr>
+    <tr><td><code>club.sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport(sport_id)</span></td><td>No</td><td>Sport discipline assigned to club</td></tr>
+    <tr><td><code>club.coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach(coach_id)</span></td><td>Yes</td><td>Assigned head coach</td></tr>
+    <tr><td><code>club.status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Active','Inactive','Suspended')</td><td>No</td><td>Operational status of franchise</td></tr>
+    <tr><td><code>cm.member_id</code></td><td>INTEGER</td><td><span class="badge-pk">COMPOSITE PK</span>, <span class="badge-fk">FK &rarr; member</span></td><td>No</td><td>Athlete member reference</td></tr>
+    <tr><td><code>cm.club_id</code></td><td>INTEGER</td><td><span class="badge-pk">COMPOSITE PK</span>, <span class="badge-fk">FK &rarr; club</span></td><td>No</td><td>Sports club franchise reference</td></tr>
+    <tr><td><code>cm.role</code></td><td>VARCHAR(50)</td><td><span class="badge-pk">COMPOSITE PK</span></td><td>No</td><td>Positional role (Forward, Striker, Bowler, Captain)</td></tr>
+    <tr><td><code>cm.join_date</code></td><td>DATE</td><td>DEFAULT CURRENT_DATE</td><td>No</td><td>Date role was assigned in the club</td></tr>
   </tbody>
 </table>
 
 <div class="page-break"></div>
-
-<h3>Table 7: <code>club_member</code> (Bridge Junction Table)</h3>
-<table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>member_id</code></td><td>INTEGER</td><td><span class="badge-pk">COMPOSITE PK</span>, <span class="badge-fk">FK &rarr; member</span></td><td>No</td><td>Athlete member reference</td></tr>
-    <tr><td><code>club_id</code></td><td>INTEGER</td><td><span class="badge-pk">COMPOSITE PK</span>, <span class="badge-fk">FK &rarr; club</span></td><td>No</td><td>Sports club franchise reference</td></tr>
-    <tr><td><code>role</code></td><td>VARCHAR(50)</td><td><span class="badge-pk">COMPOSITE PK</span></td><td>No</td><td>Positional role (Forward, Striker, Bowler, Captain)</td></tr>
-    <tr><td><code>join_date</code></td><td>DATE</td><td>DEFAULT CURRENT_DATE</td><td>No</td><td>Date role was assigned in the club</td></tr>
-  </tbody>
-</table>
 
 <h3>Table 8: <code>payment</code> (Financial Ledger)</h3>
 <table class="report-tbl">
@@ -688,64 +690,44 @@ The system encompasses member registration, multi-tier subscription billing (1, 
   </tbody>
 </table>
 
-<h3>Table 9: <code>training_session</code></h3>
+<h3>Table 9: <code>training_session</code> &amp; Table 10: <code>team</code></h3>
 <table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
+  <thead><tr><th>Table.Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>session_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Practice session identifier (701, 702...)</td></tr>
-    <tr><td><code>sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline practiced</td></tr>
-    <tr><td><code>coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach</span></td><td>No</td><td>Lead coach supervising session</td></tr>
-    <tr><td><code>venue_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; facility(facility_id)</span></td><td>No</td><td>Allocated facility ground/court</td></tr>
-    <tr><td><code>session_date</code></td><td>DATE</td><td>—</td><td>No</td><td>Scheduled calendar date</td></tr>
-    <tr><td><code>start_time</code></td><td>TIME</td><td>—</td><td>No</td><td>Session commencement time</td></tr>
-    <tr><td><code>end_time</code></td><td>TIME</td><td>CHECK (end_time &gt; start_time)</td><td>No</td><td>Session conclusion time</td></tr>
-    <tr><td><code>capacity</code></td><td>INTEGER</td><td>CHECK (capacity &gt; 0)</td><td>No</td><td>Maximum athlete participant slots</td></tr>
-    <tr><td><code>status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Scheduled','Completed','Cancelled','In Progress','Full')</td><td>No</td><td>Session status</td></tr>
+    <tr><td><code>ts.session_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Practice session identifier (701, 702...)</td></tr>
+    <tr><td><code>ts.sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline practiced</td></tr>
+    <tr><td><code>ts.coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach</span></td><td>No</td><td>Lead coach supervising session</td></tr>
+    <tr><td><code>ts.venue_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; facility(facility_id)</span></td><td>No</td><td>Allocated facility ground/court</td></tr>
+    <tr><td><code>ts.session_date</code></td><td>DATE</td><td>—</td><td>No</td><td>Scheduled calendar date</td></tr>
+    <tr><td><code>ts.start_time / end_time</code></td><td>TIME</td><td>CHECK (end_time &gt; start_time)</td><td>No</td><td>Session time slot boundary</td></tr>
+    <tr><td><code>ts.capacity</code></td><td>INTEGER</td><td>CHECK (capacity &gt; 0)</td><td>No</td><td>Maximum athlete participant slots</td></tr>
+    <tr><td><code>ts.status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Scheduled','Completed','Cancelled','In Progress','Full')</td><td>No</td><td>Session status</td></tr>
+    <tr><td><code>team.team_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Competitive squad ID (801, 802...)</td></tr>
+    <tr><td><code>team.club_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; club</span></td><td>No</td><td>Parent franchise club</td></tr>
+    <tr><td><code>team.team_name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Squad title (Thunderbolts Alpha, Titans XI)</td></tr>
+    <tr><td><code>team.sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline</td></tr>
+    <tr><td><code>team.coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach</span></td><td>Yes</td><td>Squad coach</td></tr>
+    <tr><td><code>team.status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Active','Inactive','Suspended')</td><td>No</td><td>Squad competition status</td></tr>
   </tbody>
 </table>
 
-<h3>Table 10: <code>team</code></h3>
+<h3>Table 11: <code>tournament</code> &amp; Table 12: <code>fixture</code></h3>
 <table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
+  <thead><tr><th>Table.Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>team_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Competitive squad ID (801, 802...)</td></tr>
-    <tr><td><code>club_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; club</span></td><td>No</td><td>Parent franchise club</td></tr>
-    <tr><td><code>team_name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Squad title (Thunderbolts Alpha, Titans XI)</td></tr>
-    <tr><td><code>sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline</td></tr>
-    <tr><td><code>coach_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; coach</span></td><td>Yes</td><td>Squad coach</td></tr>
-    <tr><td><code>created_date</code></td><td>DATE</td><td>DEFAULT CURRENT_DATE</td><td>No</td><td>Squad creation date</td></tr>
-    <tr><td><code>status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Active','Inactive','Suspended')</td><td>No</td><td>Squad competition status</td></tr>
+    <tr><td><code>tourn.tournament_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Tournament ID (901, 902...)</td></tr>
+    <tr><td><code>tourn.name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Tournament title (Premier League, National Cup)</td></tr>
+    <tr><td><code>tourn.sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline of competition</td></tr>
+    <tr><td><code>tourn.start_date / end_date</code></td><td>DATE</td><td>CHECK (end_date &gt;= start_date)</td><td>No</td><td>Tournament dates</td></tr>
+    <tr><td><code>tourn.type</code></td><td>VARCHAR(50)</td><td>CHECK (IN 'Knockout','Round Robin','League'...)</td><td>No</td><td>Competition bracket format</td></tr>
+    <tr><td><code>fix.fixture_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Match fixture ID (1001, 1002...)</td></tr>
+    <tr><td><code>fix.tournament_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; tournament</span></td><td>No</td><td>Parent tournament reference</td></tr>
+    <tr><td><code>fix.team1_id / team2_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; team</span>, CHECK (team1_id &lt;&gt; team2_id)</td><td>No</td><td>First and second competing squads</td></tr>
+    <tr><td><code>fix.fixture_date</code></td><td>DATETIME</td><td>—</td><td>No</td><td>Scheduled match kick-off time</td></tr>
+    <tr><td><code>fix.venue_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; facility</span></td><td>No</td><td>Hosting stadium / court facility</td></tr>
+    <tr><td><code>fix.status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Scheduled','Completed','Postponed','Cancelled','Live')</td><td>No</td><td>Match progress status</td></tr>
   </tbody>
 </table>
-
-<h3>Table 11: <code>tournament</code></h3>
-<table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>tournament_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Tournament ID (901, 902...)</td></tr>
-    <tr><td><code>name</code></td><td>VARCHAR(100)</td><td>—</td><td>No</td><td>Tournament title (Premier League, National Cup)</td></tr>
-    <tr><td><code>sport_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; sport</span></td><td>No</td><td>Sport discipline of competition</td></tr>
-    <tr><td><code>start_date</code></td><td>DATE</td><td>—</td><td>No</td><td>Tournament commencement date</td></tr>
-    <tr><td><code>end_date</code></td><td>DATE</td><td>CHECK (end_date &gt;= start_date)</td><td>No</td><td>Tournament conclusion date</td></tr>
-    <tr><td><code>type</code></td><td>VARCHAR(50)</td><td>CHECK (IN 'Knockout','Round Robin','League','Single Elimination','Open Championship')</td><td>No</td><td>Competition bracket format</td></tr>
-  </tbody>
-</table>
-
-<h3>Table 12: <code>fixture</code></h3>
-<table class="report-tbl">
-  <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Null?</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>fixture_id</code></td><td>INTEGER</td><td><span class="badge-pk">PRIMARY KEY</span></td><td>No</td><td>Match fixture ID (1001, 1002...)</td></tr>
-    <tr><td><code>tournament_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; tournament</span></td><td>No</td><td>Parent tournament reference</td></tr>
-    <tr><td><code>team1_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; team</span>, CHECK (team1_id &lt;&gt; team2_id)</td><td>No</td><td>First competing squad</td></tr>
-    <tr><td><code>team2_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; team</span></td><td>No</td><td>Second competing squad</td></tr>
-    <tr><td><code>fixture_date</code></td><td>DATETIME</td><td>—</td><td>No</td><td>Scheduled match date and kick-off time</td></tr>
-    <tr><td><code>venue_id</code></td><td>INTEGER</td><td><span class="badge-fk">FK &rarr; facility</span></td><td>No</td><td>Hosting stadium / court facility</td></tr>
-    <tr><td><code>status</code></td><td>VARCHAR(20)</td><td>CHECK (IN 'Scheduled','Completed','Postponed','Cancelled','Live')</td><td>No</td><td>Match progress status</td></tr>
-  </tbody>
-</table>
-
-<div class="page-break"></div>
 
 <!-- ========================================================================= -->
 <!-- 7.0 ANALYTICAL VIEWS & INTEGRITY TRIGGERS -->
@@ -753,8 +735,6 @@ The system encompasses member registration, multi-tier subscription billing (1, 
 <h1 class="section-title">7.0 Analytical Views &amp; Integrity Triggers</h1>
 
 <h2 class="sub-title">7.1 Pre-Compiled 3NF Reporting Views</h2>
-<p>To optimize read-heavy administrative queries, seven analytical SQL views are materialized in the database:</p>
-
 <table class="report-tbl">
   <thead>
     <tr>
@@ -803,9 +783,8 @@ The system encompasses member registration, multi-tier subscription billing (1, 
 </table>
 
 <h2 class="sub-title">7.2 Automated Database Integrity Triggers</h2>
-
 <div class="callout">
-  <div class="callout-title">Trigger 1: Fixture Team Sport Validation (<code>trg_check_fixture_team_sport</code>)</div>
+  <div class="callout-title">Trigger: Fixture Team Sport Validation (<code>trg_check_fixture_team_sport</code>)</div>
   <pre class="sql-box">CREATE TRIGGER trg_check_fixture_team_sport
 BEFORE INSERT ON fixture
 FOR EACH ROW
@@ -821,26 +800,6 @@ BEGIN
 END;</pre>
 </div>
 
-<div class="callout">
-  <div class="callout-title">Trigger 2: Facility Double-Booking Prevention (<code>trg_check_venue_session_overlap</code>)</div>
-  <pre class="sql-box">CREATE TRIGGER trg_check_venue_session_overlap
-BEFORE INSERT ON training_session
-FOR EACH ROW
-BEGIN
-    SELECT CASE
-        WHEN EXISTS (
-            SELECT 1 FROM training_session
-            WHERE venue_id = NEW.venue_id
-              AND session_date = NEW.session_date
-              AND status IN ('Scheduled', 'In Progress')
-              AND ((NEW.start_time &gt;= start_time AND NEW.start_time &lt; end_time)
-                OR (NEW.end_time &gt; start_time AND NEW.end_time &lt;= end_time))
-        )
-        THEN RAISE(ABORT, 'Error: Facility venue is already booked for this time slot!')
-    END;
-END;</pre>
-</div>
-
 <div class="page-break"></div>
 
 <!-- ========================================================================= -->
@@ -848,59 +807,41 @@ END;</pre>
 <!-- ========================================================================= -->
 <h1 class="section-title">8.0 Complex SQL Queries &amp; Benchmark Reports</h1>
 
-<h3 style="margin-top: 10px;">Query 1: Sports Popularity Ranking via Window Function (<code>DENSE_RANK</code>)</h3>
-<p>Ranks all 12 sports disciplines by total unique athlete enrollments across franchise clubs.</p>
-<pre class="sql-box">SELECT 
-    s.sport_name,
-    COUNT(DISTINCT cm.member_id) AS total_enrolled_athletes,
-    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT cm.member_id) DESC) AS popularity_rank
+<h3>Query 1: Sports Popularity Ranking via Window Function (<code>DENSE_RANK</code>)</h3>
+<pre class="sql-box">SELECT s.sport_name, COUNT(DISTINCT cm.member_id) AS total_enrolled_athletes,
+       DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT cm.member_id) DESC) AS popularity_rank
 FROM sport s
 LEFT JOIN club c ON s.sport_id = c.sport_id
 LEFT JOIN club_member cm ON c.club_id = cm.club_id
-GROUP BY s.sport_name
-ORDER BY popularity_rank ASC;</pre>
+GROUP BY s.sport_name ORDER BY popularity_rank ASC;</pre>
 
 <h3>Query 2: Multi-Table Active Membership &amp; Plan Status</h3>
-<p>Retrieves active members with their latest subscribed plan and payment audit.</p>
-<pre class="sql-box">SELECT 
-    m.member_id, m.name AS member_name, m.gender, m.email, m.phone, m.status,
-    COALESCE(mp.plan_name, 'No Active Plan') AS current_plan,
-    COALESCE(mp.duration_months || ' Month(s)', 'N/A') AS plan_duration,
-    COALESCE('₹' || printf('%.2f', p.amount), 'N/A') AS fee_paid,
-    COALESCE(p.status, 'Unpaid') AS payment_status
+<pre class="sql-box">SELECT m.member_id, m.name AS member_name, m.gender, m.email, m.phone, m.status,
+       COALESCE(mp.plan_name, 'No Active Plan') AS current_plan,
+       COALESCE(mp.duration_months || ' Month(s)', 'N/A') AS plan_duration,
+       COALESCE('₹' || printf('%.2f', p.amount), 'N/A') AS fee_paid,
+       COALESCE(p.status, 'Unpaid') AS payment_status
 FROM member m
-LEFT JOIN payment p ON p.payment_id = (
-    SELECT payment_id FROM payment WHERE member_id = m.member_id ORDER BY payment_date DESC LIMIT 1
-)
+LEFT JOIN payment p ON p.payment_id = (SELECT payment_id FROM payment WHERE member_id = m.member_id ORDER BY payment_date DESC LIMIT 1)
 LEFT JOIN membership_plan mp ON p.plan_id = mp.plan_id
 WHERE m.status = 'Active' ORDER BY m.name ASC;</pre>
 
 <h3>Query 3: Revenue Analytics by Plan Tier and Payment Mode (HAVING &amp; Aggregations)</h3>
-<pre class="sql-box">SELECT 
-    mp.plan_name, p.payment_mode,
-    COUNT(p.payment_id) AS total_transactions,
-    SUM(p.amount) AS total_collected_inr,
-    ROUND(AVG(p.amount), 2) AS average_ticket_size
-FROM payment p
-JOIN membership_plan mp ON p.plan_id = mp.plan_id
-WHERE p.status = 'Paid'
-GROUP BY mp.plan_name, p.payment_mode
-HAVING SUM(p.amount) &gt; 0
-ORDER BY total_collected_inr DESC;</pre>
+<pre class="sql-box">SELECT mp.plan_name, p.payment_mode, COUNT(p.payment_id) AS total_transactions,
+       SUM(p.amount) AS total_collected_inr, ROUND(AVG(p.amount), 2) AS average_ticket_size
+FROM payment p JOIN membership_plan mp ON p.plan_id = mp.plan_id
+WHERE p.status = 'Paid' GROUP BY mp.plan_name, p.payment_mode
+HAVING SUM(p.amount) &gt; 0 ORDER BY total_collected_inr DESC;</pre>
 
 <h3>Query 4: Training Session Venue Allocation &amp; Coach Contacts</h3>
-<pre class="sql-box">SELECT 
-    ts.session_id, s.sport_name, co.name AS coach_name, co.phone AS coach_contact,
-    f.name AS venue_name, f.location AS venue_location, ts.session_date,
-    ts.start_time || ' - ' || ts.end_time AS time_slot,
-    ts.capacity, ts.status AS session_status
+<pre class="sql-box">SELECT ts.session_id, s.sport_name, co.name AS coach_name, co.phone AS coach_contact,
+       f.name AS venue_name, f.location AS venue_location, ts.session_date,
+       ts.start_time || ' - ' || ts.end_time AS time_slot, ts.capacity, ts.status AS session_status
 FROM training_session ts
 JOIN sport s ON ts.sport_id = s.sport_id
 JOIN coach co ON ts.coach_id = co.coach_id
 JOIN facility f ON ts.venue_id = f.facility_id
 ORDER BY ts.session_date DESC, ts.start_time ASC;</pre>
-
-<div class="page-break"></div>
 
 <!-- ========================================================================= -->
 <!-- 9.0 USER INTERFACE & DEMONSTRATION -->
@@ -912,14 +853,14 @@ ORDER BY ts.session_date DESC, ts.start_time ASC;</pre>
 The Administrator Cockpit provides high-level metric summaries, a real-time table browser across all 12 relations with search and CSV export, and the <strong>Smart SQL Studio</strong>. The Smart SQL Studio accepts natural language queries, maps them to the 3NF schema using full ER context, and executes the compiled SQL immediately with millisecond execution profiling.
 </p>
 
-<div class="fig-box avoid-break">
+<div class="fig-box">
   <img src="{img_admin_dash}" alt="Admin Dashboard Overview">
   <div class="fig-caption">Figure 9.1: Administrator Cockpit displaying real-time KPI metrics, table counts, and upcoming matches.</div>
 </div>
 
-<div class="fig-box avoid-break">
+<div class="fig-box">
   <img src="{img_smart_sql}" alt="Smart SQL Studio AI">
-  <div class="fig-caption">Figure 9.2: Smart SQL Studio translating natural language prompts into optimized multi-table join queries.</div>
+  <div class="fig-caption">Figure 9.2: Smart SQL Studio translating natural language prompts into multi-table join queries.</div>
 </div>
 
 <div class="page-break"></div>
@@ -929,31 +870,24 @@ The Administrator Cockpit provides high-level metric summaries, a real-time tabl
 The Member Portal provides a personalized athlete cockpit. Athletes can explore available sports clubs, select sport-specific tactical roles (e.g., Striker, Batsman, Shuttler), join franchises, or leave existing clubs. Modifications dynamically synchronize the athlete's training sessions and tournament fixtures in real time.
 </p>
 
-<div class="fig-box avoid-break">
+<div class="fig-box">
   <img src="{img_member_dash}" alt="Member Portal Dashboard">
   <div class="fig-caption">Figure 9.3: Athlete Member Dashboard showing personalized subscription standing and quick club roles.</div>
 </div>
 
-<div class="fig-box avoid-break">
+<div class="fig-box">
   <img src="{img_member_clubs}" alt="Member Clubs Join and Leave UI">
   <div class="fig-caption">Figure 9.4: Club Management UI displaying active enrollments with "Leave Club" action and "Explore &amp; Join Available Clubs" grid.</div>
 </div>
-
-<div class="page-break"></div>
 
 <h2 class="sub-title">9.3 3D Virtual Card Checkout &amp; Official Tax Invoice</h2>
 <p>
 The checkout interface simulates real-world payment channels including UPI / QR Code (with 10-minute dynamic expiration), 3D Virtual Credit/Debit Card preview, and Net Banking. Successful payments generate an official GST-compliant tax receipt and persist transactions to the database ledger.
 </p>
 
-<div class="fig-box avoid-break">
+<div class="fig-box">
   <img src="{img_checkout}" alt="Checkout Screen">
   <div class="fig-caption">Figure 9.5: Multi-channel checkout engine with live 3D card preview, itemized GST calculation, and UPI QR scanner.</div>
-</div>
-
-<div class="fig-box avoid-break">
-  <img src="{img_er_html}" alt="Interactive ER Diagram Viewer">
-  <div class="fig-caption">Figure 9.6: Interactive SVG Entity-Relationship visualizer with zoom, pan, and live relationship inspections.</div>
 </div>
 
 <div class="page-break"></div>
@@ -966,9 +900,6 @@ The checkout interface simulates real-world payment channels including UPI / QR 
 <h2 class="sub-title">10.1 Project Conclusion</h2>
 <p>
 The <strong>Sports Club Membership and Tournament Management System</strong> successfully bridges theoretical database principles with practical full-stack software engineering. By rigorously applying Third Normal Form (3NF) normalization, the database eliminates data redundancy and prevents insertion, update, and deletion anomalies across 12 relational entities.
-</p>
-<p>
-Key achievements of this project include:
 </p>
 <ul>
   <li><strong>Robust Relational Architecture:</strong> Enforced composite primary keys, foreign key cascades, and automated triggers protecting against venue scheduling conflicts.</li>
@@ -1043,11 +974,11 @@ with sync_playwright() as p:
         path=pdf_path,
         format="A4",
         print_background=True,
-        margin={"top": "15mm", "bottom": "15mm", "left": "15mm", "right": "15mm"},
+        margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"},
         display_header_footer=True,
         header_template="<span></span>",
-        footer_template="<div style='font-size: 8pt; color: #64748b; width: 100%; text-align: right; padding-right: 15mm;'>Sports Club DBMS Report | Sheikh Arsh Ali (25WU0102255) | Page <span class='pageNumber'></span> of <span class='totalPages'></span></div>"
+        footer_template="<div style='font-size: 8pt; color: #64748b; width: 100%; text-align: right; padding-right: 12mm;'>Sports Club DBMS Report | Sheikh Arsh Ali (25WU0102255) | Page <span class='pageNumber'></span> of <span class='totalPages'></span></div>"
     )
     browser.close()
 
-print(f"PDF successfully generated at: {pdf_path} (Size: {os.path.getsize(pdf_path)} bytes)")
+print(f"PDF successfully regenerated at: {pdf_path} (Size: {os.path.getsize(pdf_path)} bytes)")
