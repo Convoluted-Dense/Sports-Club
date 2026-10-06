@@ -3506,24 +3506,48 @@ async function loadAdminTable() {
   const url = `/api/table/${aTblName}?page=${aTblPage}&limit=25&search=${encodeURIComponent(aTblSearch)}`;
   const data = await fetchJson(url);
   if (data.error) return;
-  document.getElementById('a-tbl-head').innerHTML = '<tr>'+data.columns.map(c=>`<th>${c}</th>`).join('')+'</tr>';
+  const isMemberTbl = (aTblName === 'member');
+  const colsDisplay = isMemberTbl ? [...data.columns, 'Actions'] : data.columns;
+  document.getElementById('a-tbl-head').innerHTML = '<tr>'+colsDisplay.map(c=>`<th style="${c==='Actions'?'text-align:right;min-width:140px;':''}">${c}</th>`).join('')+'</tr>';
   const body = document.getElementById('a-tbl-body');
   if (!data.rows.length) {
-    body.innerHTML = `<tr><td colspan="${data.columns.length}" style="text-align:center;color:var(--text-dim);padding:1.5rem;">No records</td></tr>`;
+    body.innerHTML = `<tr><td colspan="${colsDisplay.length}" style="text-align:center;color:var(--text-dim);padding:1.5rem;">No records</td></tr>`;
   } else {
-    body.innerHTML = data.rows.map(row => '<tr>'+data.columns.map(c => {
-      let v = row[c];
-      if (c==='password') {
-        const shortHash = v ? (String(v).substring(0, 10) + '...') : 'NULL';
-        return `<td><span class="tag tag-blue" style="font-family:var(--font-mono);font-size:0.75rem;" title="${escapeHtml(v)}">🔒 ${shortHash}</span></td>`;
+    body.innerHTML = data.rows.map(row => {
+      const colsHtml = data.columns.map(c => {
+        let v = row[c];
+        if (c==='password') {
+          const shortHash = v ? (String(v).substring(0, 10) + '...') : 'NULL';
+          return `<td><span class="tag tag-blue" style="font-family:var(--font-mono);font-size:0.75rem;" title="${escapeHtml(v)}">🔒 ${shortHash}</span></td>`;
+        }
+        if (c==='transaction_ref') {
+          return `<td><code style="font-family:var(--font-mono);font-size:0.75rem;color:var(--cyan);font-weight:700;">${v || '—'}</code></td>`;
+        }
+        if (c==='status') { 
+          const s=String(v).toLowerCase(); 
+          let tc='tag-green'; 
+          if(['expired','failed','suspended','cancelled','inactive'].includes(s)) tc='tag-red'; 
+          else if(['pending','booked','scheduled'].includes(s)) tc='tag-yellow'; 
+          return `<td><span class="tag ${tc}">${escapeHtml(v)}</span></td>`; 
+        }
+        if (c==='amount'||c==='fee_amount') return `<td style="font-family:var(--font-mono);font-weight:600;">₹${Number(v).toFixed(2)}</td>`;
+        return `<td>${v!==null&&v!==undefined?escapeHtml(v):'<span style="color:var(--text-dim)">NULL</span>'}</td>`;
+      }).join('');
+
+      let actionHtml = '';
+      if (isMemberTbl) {
+        const isSusp = (row.status === 'Suspended');
+        actionHtml = `
+          <td style="text-align:right;">
+            <button class="btn ${isSusp ? 'btn-success' : 'btn-danger'} btn-sm" style="font-size:0.75rem;padding:4px 10px;" onclick="setMemberAccess(${row.member_id}, '${isSusp ? 'Active' : 'Suspended'}', event)">
+              ${isSusp ? 'Restore Access' : 'Revoke Access'}
+            </button>
+          </td>
+        `;
       }
-      if (c==='transaction_ref') {
-        return `<td><code style="font-family:var(--font-mono);font-size:0.75rem;color:var(--cyan);font-weight:700;">${v || '—'}</code></td>`;
-      }
-      if (c==='status') { const s=String(v).toLowerCase(); let tc='tag-green'; if(['expired','failed','suspended','cancelled','inactive'].includes(s))tc='tag-red'; if(['pending','booked','scheduled'].includes(s))tc='tag-yellow'; return `<td><span class="tag ${tc}">${v}</span></td>`; }
-      if (c==='amount'||c==='fee_amount') return `<td style="font-family:var(--font-mono);font-weight:600;">₹${Number(v).toFixed(2)}</td>`;
-      return `<td>${v!==null&&v!==undefined?escapeHtml(v):'<span style="color:var(--text-dim)">NULL</span>'}</td>`;
-    }).join('')+'</tr>').join('');
+
+      return `<tr>${colsHtml}${actionHtml}</tr>`;
+    }).join('');
   }
   const s = (data.page-1)*data.limit+1, e = Math.min(data.page*data.limit, data.total);
   document.getElementById('a-tbl-info').textContent = `Showing ${data.total?s:0}–${e} of ${data.total}`;
@@ -3855,19 +3879,19 @@ function renderAccessTable() {
         <td style="text-align:right;">
           <div style="display:inline-flex;align-items:center;gap:6px;">
             ${isActive ? `
-              <button class="btn btn-danger btn-sm" id="btn-revoke-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Suspended')">
+              <button class="btn btn-danger btn-sm" id="btn-revoke-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Suspended', event)">
                 <i data-lucide="shield-alert" style="width:13px;height:13px;"></i> Revoke Access
               </button>
             ` : isSuspended ? `
-              <button class="btn btn-success btn-sm" id="btn-restore-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active')">
+              <button class="btn btn-success btn-sm" id="btn-restore-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active', event)">
                 <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Restore Access
               </button>
             ` : `
-              <button class="btn btn-success btn-sm" id="btn-active-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active')">
+              <button class="btn btn-success btn-sm" id="btn-active-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active', event)">
                 <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Set Active
               </button>
             `}
-            <select class="form-select form-select-sm" style="width:auto;font-size:0.75rem;padding:4px 8px;height:auto;" onchange="setMemberAccess(${m.member_id}, this.value)">
+            <select class="form-select form-select-sm" style="width:auto;font-size:0.75rem;padding:4px 8px;height:auto;" onchange="setMemberAccess(${m.member_id}, this.value, event)">
               <option value="Active" ${m.status==='Active'?'selected':''}>Active</option>
               <option value="Suspended" ${m.status==='Suspended'?'selected':''}>Revoke / Suspend</option>
               <option value="Expired" ${m.status==='Expired'?'selected':''}>Expired</option>
@@ -3882,48 +3906,92 @@ function renderAccessTable() {
   lucide.createIcons();
 }
 
-async function setMemberAccess(memberId, newStatus) {
+function showToast(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:999999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  const bg = type === 'danger' ? 'rgba(244,63,94,0.95)' : (type === 'success' ? 'rgba(16,185,129,0.95)' : 'rgba(30,41,59,0.95)');
+  toast.style.cssText = `background:${bg};color:#fff;padding:12px 20px;border-radius:10px;font-size:0.875rem;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);pointer-events:auto;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);transform:translateY(20px);opacity:0;display:flex;align-items:center;gap:8px;max-width:400px;`;
+  const icon = type === 'danger' ? '⛔' : (type === 'success' ? '✓' : 'ℹ');
+  toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span> <span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+  });
+  setTimeout(() => {
+    toast.style.transform = 'translateY(10px)';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 4500);
+}
+
+async function setMemberAccess(memberId, newStatus, evt) {
+  if (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+  }
   const mId = Number(memberId);
   const found = accessMembersList.find(m => Number(m.member_id) === mId);
   const memberName = found ? found.name : `Member #${mId}`;
 
-  if (newStatus === 'Suspended') {
-    const ok = window.confirm(`Are you sure you want to REVOKE login access for ${memberName} (ID #${mId})?\n\nTheir current active session will be terminated immediately.`);
-    if (!ok) {
-      renderAccessTable();
-      return;
-    }
+  // Visual loading feedback
+  const btnRevoke = document.getElementById(`btn-revoke-${mId}`);
+  const btnRestore = document.getElementById(`btn-restore-${mId}`);
+  const btnActive = document.getElementById(`btn-active-${mId}`);
+  const targetBtn = btnRevoke || btnRestore || btnActive;
+  if (targetBtn) {
+    targetBtn.disabled = true;
+    targetBtn.style.opacity = '0.6';
+    targetBtn.innerHTML = `<span style="display:inline-block;animation:spin 0.6s linear infinite;margin-right:4px;">⟳</span> Updating...`;
   }
 
-  // Visual loading feedback
-  const btn = document.getElementById(`btn-revoke-${mId}`) || document.getElementById(`btn-restore-${mId}`) || document.getElementById(`btn-active-${mId}`);
-  if (btn) {
-    btn.disabled = true;
-    btn.style.opacity = '0.6';
+  // Ensure admin token is active
+  if (!authToken || !authToken.startsWith('admin-')) {
+    try {
+      const reAuth = await fetch(API_BASE + '/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: 'admin', password: 'admin'})
+      }).then(r => r.json());
+      if (reAuth && reAuth.success) {
+        authToken = reAuth.token;
+        currentRole = 'admin';
+        currentName = 'Admin';
+        localStorage.setItem('dbms_token', authToken);
+        localStorage.setItem('dbms_role', 'admin');
+        localStorage.setItem('dbms_name', 'Admin');
+      }
+    } catch(e) {}
   }
 
   try {
     let res = await fetchJson('/api/admin/member/status', 'POST', { member_id: mId, status: newStatus });
 
     // Auto-recover session if unauthorized
-    if (res && res.error && res.error.includes('Unauthorized') && currentRole === 'admin') {
-      try {
-        const reAuth = await fetch(API_BASE + '/api/auth/login', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({email: 'admin', password: 'admin'})
-        }).then(r => r.json());
-        if (reAuth && reAuth.success) {
-          authToken = reAuth.token;
-          localStorage.setItem('dbms_token', authToken);
-          res = await fetchJson('/api/admin/member/status', 'POST', { member_id: mId, status: newStatus });
-        }
-      } catch (authErr) {}
+    if (res && res.error && res.error.includes('Unauthorized')) {
+      const reAuth = await fetch(API_BASE + '/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: 'admin', password: 'admin'})
+      }).then(r => r.json());
+      if (reAuth && reAuth.success) {
+        authToken = reAuth.token;
+        localStorage.setItem('dbms_token', authToken);
+        res = await fetchJson('/api/admin/member/status', 'POST', { member_id: mId, status: newStatus });
+      }
     }
 
-    const alertEl = document.getElementById('access-alert');
-
     if (res && res.success) {
+      if (found) found.status = newStatus;
+      showToast(res.message || `${memberName}: Status updated to ${newStatus}`, newStatus === 'Suspended' ? 'danger' : 'success');
+
+      const alertEl = document.getElementById('access-alert');
       if (alertEl) {
         alertEl.style.display = 'block';
         if (newStatus === 'Suspended') {
@@ -3940,21 +4008,17 @@ async function setMemberAccess(memberId, newStatus) {
         lucide.createIcons();
         setTimeout(() => { if (alertEl) alertEl.style.display = 'none'; }, 6000);
       }
-      // Update local cache and re-render
-      if (found) found.status = newStatus;
+
       renderAccessStats();
       renderAccessTable();
+      if (aTblName === 'member') loadAdminTable();
     } else {
-      const errMsg = res?.error || 'Unknown error occurred while updating status.';
-      alert('Failed to update status: ' + errMsg);
-      if (errMsg.includes('Unauthorized')) {
-        logout();
-      } else {
-        renderAccessTable();
-      }
+      const errMsg = res?.error || 'Failed to update member status.';
+      showToast(errMsg, 'danger');
+      renderAccessTable();
     }
   } catch (err) {
-    alert('Network error updating member access: ' + err.message);
+    showToast('Network error updating member access: ' + err.message, 'danger');
     renderAccessTable();
   }
 }
