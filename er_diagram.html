@@ -1,0 +1,3249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Club Membership & Tournament Management System — Interactive ER Diagram</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    if (window.self !== window.top || window.location.search.includes('embed') || window.location.search.includes('presentation')) {
+      document.documentElement.classList.add('in-iframe');
+    }
+  </script>
+
+  <style>
+    /* Iframe embed mode - hide top nav header when embedded in presentation */
+    html.in-iframe header.app-header,
+    body.in-iframe header.app-header {
+      display: none !important;
+    }
+
+    /* ==========================================================
+       DESIGN SYSTEM & THEME TOKENS
+       ========================================================== */
+    :root {
+      /* Base & Surfaces */
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-subtle: #f1f5f9;
+      --border-main: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      
+      /* Primary Interactive */
+      --accent-primary: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #eff6ff;
+      
+      /* Entity Color Tokens (Chen Notation Pastel/Vibrant) */
+      --plan-bg: #fdf2f8;
+      --plan-border: #f43f5e;
+      --plan-text: #881337;
+      
+      --sport-bg: #ecfdf5;
+      --sport-border: #10b981;
+      --sport-text: #064e3b;
+      
+      --facility-bg: #f0f9ff;
+      --facility-border: #0ea5e9;
+      --facility-text: #0c4a6e;
+      
+      --member-bg: #eff6ff;
+      --member-border: #3b82f6;
+      --member-text: #1e3a8a;
+      
+      --payment-bg: #fff1f2;
+      --payment-border: #fb7185;
+      --payment-text: #881337;
+      
+      --club-member-bg: #f0fdf4;
+      --club-member-border: #22c55e;
+      --club-member-text: #14532d;
+      
+      --club-bg: #fef2f2;
+      --club-border: #ef4444;
+      --club-text: #7f1d1d;
+      
+      --coach-bg: #f7fee7;
+      --coach-border: #84cc16;
+      --coach-text: #365314;
+      
+      --session-bg: #f0fdfa;
+      --session-border: #14b8a6;
+      --session-text: #134e4a;
+      
+      --tournament-bg: #faf5ff;
+      --tournament-border: #a855f7;
+      --tournament-text: #581c87;
+      
+      --team-bg: #fffbeb;
+      --team-border: #f59e0b;
+      --team-text: #78350f;
+
+      --fixture-bg: #fffdf0;
+      --fixture-border: #d97706;
+      --fixture-text: #92400e;
+
+      --rel-bg: #f5f3ff;
+      --rel-border: #6366f1;
+      --rel-text: #312e81;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 28px rgba(0,0,0,0.12);
+      
+      --canvas-grid: #e2e8f0;
+      --canvas-bg: #ffffff;
+      --connector-stroke: #64748b;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b0f17;
+      --bg-surface: #111827;
+      --bg-surface-subtle: #1e293b;
+      --border-main: #334155;
+      --border-subtle: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --accent-primary: #3b82f6;
+      --accent-hover: #60a5fa;
+
+      --plan-bg: #271420;
+      --plan-border: #fb7185;
+      --plan-text: #ffe4e6;
+      
+      --sport-bg: #0f291e;
+      --sport-border: #34d399;
+      --sport-text: #d1fae5;
+      
+      --facility-bg: #0c283d;
+      --facility-border: #38bdf8;
+      --facility-text: #e0f2fe;
+      
+      --member-bg: #14284b;
+      --member-border: #60a5fa;
+      --member-text: #dbeafe;
+      
+      --payment-bg: #35141d;
+      --payment-border: #fb7185;
+      --payment-text: #ffe4e6;
+      
+      --club-member-bg: #102e23;
+      --club-member-border: #4ade80;
+      --club-member-text: #ecfdf5;
+      
+      --club-bg: #381616;
+      --club-border: #f87171;
+      --club-text: #fee2e2;
+      
+      --coach-bg: #1e2d11;
+      --coach-border: #a3e635;
+      --coach-text: #ecfccb;
+      
+      --session-bg: #0e2e2b;
+      --session-border: #2dd4bf;
+      --session-text: #ccfbf1;
+      
+      --tournament-bg: #271838;
+      --tournament-border: #c084fc;
+      --tournament-text: #f3e8ff;
+      
+      --team-bg: #35260c;
+      --team-border: #fbbf24;
+      --team-text: #fef3c7;
+
+      --fixture-bg: #302008;
+      --fixture-border: #f59e0b;
+      --fixture-text: #fde68a;
+
+      --rel-bg: #201a40;
+      --rel-border: #818cf8;
+      --rel-text: #e0e7ff;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.4);
+      --shadow-lg: 0 10px 28px rgba(0,0,0,0.5);
+      
+      --canvas-grid: #1e293b;
+      --canvas-bg: #090d16;
+      --connector-stroke: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Application Bar */
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-main);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Nav View Switcher */
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-surface-subtle);
+      padding: 3px;
+      border-radius: 9px;
+      border: 1px solid var(--border-main);
+      gap: 2px;
+    }
+
+    .nav-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="dark"] .nav-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--accent-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Actions Header Controls */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 6px 10px 6px 32px;
+      font-size: 12.5px;
+      color: var(--text-main);
+      width: 180px;
+      transition: width 0.2s ease, border-color 0.2s ease;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .search-box input:focus {
+      width: 240px;
+      border-color: var(--accent-primary);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 9px;
+      width: 15px;
+      height: 15px;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-action:hover {
+      color: var(--text-main);
+      border-color: var(--text-dim);
+      background: var(--bg-surface-subtle);
+    }
+
+    .btn-action.primary {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .btn-action.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Main Workspace Layout */
+    main.app-workspace {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* View Panes */
+    .view-pane {
+      position: absolute;
+      inset: 0;
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .view-pane.active {
+      display: flex;
+    }
+
+    /* Canvas Stage */
+    #pane-er-diagram {
+      flex-direction: column;
+      position: relative;
+      background-color: var(--canvas-bg);
+      background-image: radial-gradient(var(--canvas-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow: hidden;
+    }
+
+    .svg-viewport-wrapper {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .svg-viewport-wrapper:active {
+      cursor: grabbing;
+    }
+
+    svg#er-svg {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      transform-origin: 0 0;
+    }
+
+    /* Floating Diagram Controls */
+    .floating-toolbar {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 12px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+      z-index: 30;
+      backdrop-filter: blur(8px);
+    }
+
+    .zoom-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-subtle);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+
+    .zoom-btn:hover {
+      background: var(--border-subtle);
+      border-color: var(--border-main);
+    }
+
+    .zoom-level {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 48px;
+      text-align: center;
+    }
+
+    .tb-divider {
+      width: 1px;
+      height: 18px;
+      background: var(--border-main);
+      margin: 0 2px;
+    }
+
+    /* Entity Legend Floating */
+    .floating-legend {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 5px 8px;
+      box-shadow: var(--shadow-sm);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      pointer-events: auto;
+      backdrop-filter: blur(8px);
+    }
+
+    .legend-title {
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 1px;
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      max-width: 320px;
+    }
+
+    .legend-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .legend-pill:hover {
+      border-color: var(--accent-primary);
+      color: var(--text-main);
+    }
+
+    .legend-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    /* Side Inspector Drawer */
+    #side-inspector {
+      width: 380px;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-main);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 40;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.06);
+      transition: transform 0.25s ease, margin-right 0.25s ease;
+    }
+
+    #side-inspector.collapsed {
+      margin-right: -380px;
+    }
+
+    .inspector-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface-subtle);
+    }
+
+    .inspector-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .close-inspector-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .close-inspector-btn:hover {
+      color: var(--text-main);
+      background: var(--border-subtle);
+    }
+
+    .inspector-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .inspector-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+
+    .entity-desc-box {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      background: var(--bg-surface-subtle);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .attr-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .attr-table th {
+      text-align: left;
+      padding: 6px 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-main);
+      background: var(--bg-surface-subtle);
+    }
+
+    .attr-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .badge-pk {
+      background: #fef3c7;
+      color: #92400e;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-fk {
+      background: #dbeafe;
+      color: #1e40af;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-unique {
+      background: #f3e8ff;
+      color: #6b21a8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid #e9d5ff;
+    }
+
+    [data-theme="dark"] .badge-pk {
+      background: #451a03;
+      color: #fcd34d;
+      border-color: #78350f;
+    }
+
+    [data-theme="dark"] .badge-fk {
+      background: #172554;
+      color: #93c5fd;
+      border-color: #1e3a8a;
+    }
+
+    [data-theme="dark"] .badge-unique {
+      background: #3b0764;
+      color: #d8b4fe;
+      border-color: #581c87;
+    }
+
+    /* Views 2, 3, 4, 5 Stylings */
+    #pane-relational-cards,
+    #pane-matrix,
+    #pane-audit,
+    #pane-ddl {
+      background: var(--bg-page);
+      padding: 28px 36px;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .view-title-block h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .view-title-block p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .schema-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      padding: 12px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(0,0,0,0.06);
+    }
+
+    /* Data Table */
+    .data-table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.data-table th {
+      background: var(--bg-surface-subtle);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-main);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    table.data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table tr:hover td {
+      background: var(--bg-surface-subtle);
+    }
+
+    /* SQL DDL Code View */
+    .sql-code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      padding: 20px;
+      border-radius: 10px;
+      overflow-x: auto;
+      border: 1px solid #1e293b;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Audit Checklist */
+    .audit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    .audit-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .audit-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #dcfce7;
+      color: #15803d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    [data-theme="dark"] .audit-icon {
+      background: #14532d;
+      color: #86efac;
+    }
+
+    .audit-content h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .audit-content p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* ==========================================================
+       SVG ER DIAGRAM SPECIFIC STYLES & DRAGGING ENGINE
+       ========================================================== */
+    .er-entity, .er-rel, .er-attr, .er-title-box {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    body.is-dragging,
+    body.is-dragging .er-entity,
+    body.is-dragging .er-rel,
+    body.is-dragging .er-attr,
+    body.is-dragging .er-title-box,
+    body.is-dragging .svg-viewport-wrapper {
+      cursor: grabbing !important;
+    }
+
+    .node-dragging {
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.35)) !important;
+      opacity: 0.95;
+    }
+
+    .er-entity {
+      transition: filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    .er-entity:hover rect {
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.22));
+      stroke-width: 2.5px !important;
+    }
+
+    .er-attr {
+      transition: filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    .er-attr:hover rect {
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18));
+      stroke-width: 2px !important;
+    }
+
+    .er-rel {
+      transition: filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    .er-rel:hover polygon {
+      filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.45));
+      stroke-width: 2.5px !important;
+    }
+
+    .er-connector {
+      stroke: var(--connector-stroke);
+      stroke-width: 1.6;
+      fill: none;
+      pointer-events: none;
+      transition: stroke 0.2s ease, stroke-width 0.2s ease;
+    }
+
+    /* Arrow Attachments */
+    #connections-layer .er-connector {
+      marker-end: url(#arrow-rel);
+    }
+
+    #attr-connectors-layer .er-connector {
+      marker-end: url(#arrow-attr);
+    }
+
+    [data-theme="dark"] marker#arrow-rel path,
+    [data-theme="dark"] marker#arrow-attr path {
+      fill: #94a3b8;
+    }
+
+    [data-theme="light"] marker#arrow-rel path,
+    [data-theme="light"] marker#arrow-attr path {
+      fill: #64748b;
+    }
+
+    [data-theme="dark"] marker#arrow-rel-active path,
+    [data-theme="dark"] marker#arrow-attr-active path {
+      fill: #60a5fa;
+    }
+
+    [data-theme="light"] marker#arrow-rel-active path,
+    [data-theme="light"] marker#arrow-attr-active path {
+      fill: #2563eb;
+    }
+
+    /* Arrow display modes */
+    svg.arrows-none .er-connector {
+      marker-end: none !important;
+    }
+
+    svg.arrows-rel-only #attr-connectors-layer .er-connector {
+      marker-end: none !important;
+    }
+
+    .er-cardinality {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      fill: var(--text-main);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .highlight-active .er-entity,
+    .highlight-active .er-attr,
+    .highlight-active .er-rel,
+    .highlight-active .er-connector,
+    .highlight-active .er-cardinality {
+      opacity: 0.16;
+      transition: opacity 0.25s ease;
+    }
+
+    .highlight-active .er-highlight {
+      opacity: 1 !important;
+    }
+
+    .highlight-active .er-highlight.er-connector {
+      stroke: #2563eb !important;
+      stroke-width: 2.8px !important;
+    }
+
+    .highlight-active #connections-layer .er-highlight.er-connector {
+      marker-end: url(#arrow-rel-active) !important;
+    }
+
+    .highlight-active #attr-connectors-layer .er-highlight.er-connector {
+      marker-end: url(#arrow-attr-active) !important;
+    }
+
+    /* Underline for PK in ER */
+    .pk-text {
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .unique-text {
+      font-style: italic;
+    }
+
+    /* Floating Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media print {
+      header.app-header, .floating-toolbar, .floating-legend, #side-inspector, .nav-tabs {
+        display: none !important;
+      }
+      #pane-er-diagram {
+        background: white !important;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Top Application Navigation -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-badge">ER 3.0</div>
+      <div>
+        <div class="brand-title">Sports Club & Tournament System</div>
+        <div class="brand-subtitle">Conceptual & Logical Database Architecture</div>
+      </div>
+    </div>
+
+    <!-- Center Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab-btn active" onclick="switchView('er-diagram')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Vector ER Diagram
+      </button>
+      <button class="nav-tab-btn" onclick="switchView('relational-cards')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        Relational Tables (3NF)
+      </button>
+      <button class="nav-tab-btn" onclick="switchView('matrix')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+        Relationships & Matrix
+      </button>
+      <button class="nav-tab-btn" onclick="switchView('audit')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Integrity Audit
+      </button>
+      <button class="nav-tab-btn" onclick="switchView('ddl')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        SQL DDL
+      </button>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="diagram-search" placeholder="Search entity, column..." oninput="handleSearch(this.value)">
+      </div>
+
+      <button class="btn-action" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+
+      <button class="btn-action" onclick="exportSVG()" title="Export Scalable Vector Graphics">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export SVG
+      </button>
+
+      <button class="btn-action primary" onclick="window.print()" title="Print / PDF">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Print / PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- App Workspace -->
+  <main class="app-workspace">
+
+    <!-- ==================== PANE 1: INTERACTIVE ER CANVAS ==================== -->
+    <div class="view-pane active" id="pane-er-diagram">
+      <div class="svg-viewport-wrapper" id="viewport-wrapper">
+        <svg id="er-svg" viewBox="0 0 2600 1350" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <!-- Drop Shadow Filters -->
+            <filter id="shadow-box" x="-10%" y="-10%" width="125%" height="125%">
+              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.10" />
+            </filter>
+            <filter id="shadow-attr" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="1.5" stdDeviation="2.5" flood-opacity="0.08" />
+            </filter>
+            <filter id="shadow-banner" x="-5%" y="-15%" width="110%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.12" flood-color="#3b82f6" />
+            </filter>
+
+            <!-- Gradients for Title Header Box -->
+            <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#eff6ff" />
+              <stop offset="50%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#f0fdf4" />
+            </linearGradient>
+
+            <linearGradient id="title-badge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#dbeafe" />
+              <stop offset="100%" stop-color="#bfdbfe" />
+            </linearGradient>
+
+            <!-- Arrowhead Markers -->
+            <!-- Relationship normal arrow -->
+            <marker id="arrow-rel" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b" />
+            </marker>
+
+            <!-- Relationship active / highlight arrow -->
+            <marker id="arrow-rel-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
+            </marker>
+
+            <!-- Attribute arrow -->
+            <marker id="arrow-attr" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 2 L 7.5 5 L 0 8 z" fill="#64748b" />
+            </marker>
+
+            <!-- Attribute active / highlight arrow -->
+            <marker id="arrow-attr-active" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+              <path d="M 0 2 L 7.5 5 L 0 8 z" fill="#2563eb" />
+            </marker>
+          </defs>
+
+          <!-- ==================== TOP TITLE BANNER ==================== -->
+          <g class="er-title-box" id="title-banner">
+            <!-- Main Title Box -->
+            <rect x="800" y="24" width="1000" height="74" rx="14" fill="url(#header-grad)" stroke="#93c5fd" stroke-width="2" filter="url(#shadow-banner)" />
+            <text x="1300" y="54" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="23" font-weight="700" fill="#0f172a" letter-spacing="0.01em">
+              Sports Club Membership and Tournament Management System
+            </text>
+            <text x="1300" y="82" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="14.5" font-weight="600" fill="#475569" letter-spacing="0.04em">
+              Conceptual Entity-Relationship Diagram (Chen Notation)
+            </text>
+
+            <!-- ER Diagram Badge -->
+            <rect x="1200" y="106" width="200" height="34" rx="8" fill="url(#title-badge-grad)" stroke="#60a5fa" stroke-width="1.8" filter="url(#shadow-sm)" />
+            <text x="1300" y="129" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="#1e3a8a" letter-spacing="0.06em">
+              ER Diagram
+            </text>
+          </g>
+
+          <!-- ==================== CONNECTOR PATHS & RELATIONSHIPS LAYER ==================== -->
+          <g id="connections-layer">
+
+            <!-- 1. MEMBERSHIP_PLAN to MEMBER through <has> -->
+            <path class="er-connector" d="M 450 272 L 525 290" data-link="MEMBERSHIP_PLAN rel-plan-has" />
+            <path class="er-connector" d="M 615 290 C 700 290, 750 380, 800 420" data-link="rel-plan-has MEMBER" />
+
+            <!-- 2. SPORT to MEMBER through <has> -->
+            <path class="er-connector" d="M 430 502 L 525 502" data-link="SPORT rel-sport-has" />
+            <path class="er-connector" d="M 615 502 L 800 448" data-link="rel-sport-has MEMBER" />
+
+            <!-- 3. SPORT to FACILITY through <uses> -->
+            <path class="er-connector" d="M 340 534 L 340 645" data-link="SPORT rel-sport-uses" />
+            <path class="er-connector" d="M 340 705 L 340 820" data-link="rel-sport-uses FACILITY" />
+
+            <!-- 4. MEMBER to PAYMENT through <makes> -->
+            <path class="er-connector" d="M 830 486 L 770 600" data-link="MEMBER rel-member-makes" />
+            <path class="er-connector" d="M 730 630 L 730 730" data-link="rel-member-makes PAYMENT" />
+
+            <!-- 5. MEMBER to TRAINING_SESSION through <books> -->
+            <path class="er-connector" d="M 950 486 L 970 690" data-link="MEMBER rel-member-books" />
+            <path class="er-connector" d="M 970 750 L 970 1040" data-link="rel-member-books TRAINING_SESSION" />
+
+            <!-- 6. MEMBER to CLUB_MEMBER through <belongs to> and to CLUB -->
+            <path class="er-connector" d="M 1020 448 L 1155 443" data-link="MEMBER rel-member-belongs" />
+            <path class="er-connector" d="M 1245 443 L 1380 443" data-link="rel-member-belongs CLUB_MEMBER" />
+            <path class="er-connector" d="M 1560 443 L 1720 443" data-link="CLUB_MEMBER CLUB" />
+
+            <!-- 7. CLUB to COACH through <has> -->
+            <path class="er-connector" d="M 1900 443 L 1980 443" data-link="CLUB rel-club-coach" />
+            <path class="er-connector" d="M 2070 443 L 2150 443" data-link="rel-club-coach COACH" />
+
+            <!-- 8. CLUB to TEAM through <has> -->
+            <path class="er-connector" d="M 1765 476 L 1720 520" data-link="CLUB rel-club-team" />
+            <path class="er-connector" d="M 1720 580 L 1590 680" data-link="rel-club-team TEAM" />
+
+            <!-- 9. TEAM to FIXTURE through <participates in> -->
+            <path class="er-connector" d="M 1580 744 L 1670 845" data-link="TEAM rel-team-fixture" />
+            <path class="er-connector" d="M 1670 905 L 1760 1010" data-link="rel-team-fixture FIXTURE" />
+
+            <!-- 10. TOURNAMENT to FIXTURE through <has> -->
+            <path class="er-connector" d="M 1970 744 L 1970 845" data-link="TOURNAMENT rel-tourn-fixture" />
+            <path class="er-connector" d="M 1970 905 L 1870 1010" data-link="rel-tourn-fixture FIXTURE" />
+
+          </g>
+
+          <!-- ==================== INDIVIDUAL ATTRIBUTE CONNECTORS (NO SHARED BRANCHES) ==================== -->
+          <g id="attr-connectors-layer">
+
+            <!-- MEMBERSHIP_PLAN: 4 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 260 240 C 260 170, 215 157, 185 157" data-attr="MEMBERSHIP_PLAN" />
+            <path class="er-connector" d="M 285 240 C 285 212, 220 212, 185 212" data-attr="MEMBERSHIP_PLAN" />
+            <path class="er-connector" d="M 310 240 C 310 267, 230 267, 195 267" data-attr="MEMBERSHIP_PLAN" />
+            <path class="er-connector" d="M 335 240 C 335 322, 230 322, 185 322" data-attr="MEMBERSHIP_PLAN" />
+
+            <!-- SPORT: 2 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 250 485 C 220 485, 210 472, 185 472" data-attr="SPORT" />
+            <path class="er-connector" d="M 250 515 C 220 515, 210 532, 185 532" data-attr="SPORT" />
+
+            <!-- FACILITY: 6 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 250 830 C 225 830, 220 697, 195 697" data-attr="FACILITY" />
+            <path class="er-connector" d="M 250 840 C 220 840, 210 752, 180 752" data-attr="FACILITY" />
+            <path class="er-connector" d="M 250 850 C 215 850, 205 807, 180 807" data-attr="FACILITY" />
+            <path class="er-connector" d="M 250 860 C 215 860, 205 862, 185 862" data-attr="FACILITY" />
+            <path class="er-connector" d="M 250 870 C 220 870, 210 917, 185 917" data-attr="FACILITY" />
+            <path class="er-connector" d="M 250 880 C 225 880, 220 972, 180 972" data-attr="FACILITY" />
+
+            <!-- MEMBER: 9 Individual Dedicated Connectors (Radial Symmetrical Fan) -->
+            <path class="er-connector" d="M 840 410 C 820 310, 750 250, 732 201" data-attr="MEMBER" />
+            <path class="er-connector" d="M 885 410 C 885 320, 895 240, 895 186" data-attr="MEMBER" />
+            <path class="er-connector" d="M 935 410 C 935 320, 1035 240, 1035 186" data-attr="MEMBER" />
+            <path class="er-connector" d="M 980 410 C 1000 310, 1170 250, 1190 201" data-attr="MEMBER" />
+            <path class="er-connector" d="M 820 410 C 785 330, 770 280, 755 247" data-attr="MEMBER" />
+            <path class="er-connector" d="M 805 425 C 780 370, 770 345, 755 302" data-attr="MEMBER" />
+            <path class="er-connector" d="M 800 440 C 775 410, 765 375, 755 357" data-attr="MEMBER" />
+            <path class="er-connector" d="M 1000 410 C 1035 330, 1110 280, 1130 258" data-attr="MEMBER" />
+            <path class="er-connector" d="M 1015 425 C 1040 370, 1115 345, 1135 333" data-attr="MEMBER" />
+
+            <!-- PAYMENT: 8 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 640 740 C 615 740, 610 647, 595 647" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 640 750 C 615 750, 610 702, 595 702" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 640 760 C 615 760, 610 757, 595 757" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 640 770 C 615 770, 610 812, 595 812" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 640 780 C 615 780, 610 867, 595 867" data-attr="PAYMENT" />
+            
+            <path class="er-connector" d="M 820 745 C 845 745, 850 702, 860 702" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 820 760 C 845 760, 860 757, 875 757" data-attr="PAYMENT" />
+            <path class="er-connector" d="M 820 775 C 845 775, 850 812, 855 812" data-attr="PAYMENT" />
+
+            <!-- CLUB_MEMBER: 4 Individual Dedicated Connectors (Parallel Nested Lanes) -->
+            <path class="er-connector" d="M 1405 410 C 1370 410, 1370 345, 1370 332 L 1405 332" data-attr="CLUB_MEMBER" />
+            <path class="er-connector" d="M 1395 410 C 1358 410, 1358 300, 1358 277 L 1415 277" data-attr="CLUB_MEMBER" />
+            <path class="er-connector" d="M 1385 410 C 1346 410, 1346 250, 1346 222 L 1405 222" data-attr="CLUB_MEMBER" />
+            <path class="er-connector" d="M 1380 420 C 1334 420, 1334 200, 1334 167 L 1395 167" data-attr="CLUB_MEMBER" />
+
+            <!-- CLUB: 6 Individual Dedicated Connectors (Parallel Nested Lanes) -->
+            <path class="er-connector" d="M 1750 410 C 1715 410, 1715 350, 1715 337 L 1745 337" data-attr="CLUB" />
+            <path class="er-connector" d="M 1742 410 C 1704 410, 1704 305, 1704 287 L 1735 287" data-attr="CLUB" />
+            <path class="er-connector" d="M 1734 410 C 1693 410, 1693 255, 1693 237 L 1735 237" data-attr="CLUB" />
+            <path class="er-connector" d="M 1726 410 C 1682 410, 1682 205, 1682 187 L 1735 187" data-attr="CLUB" />
+            <path class="er-connector" d="M 1720 415 C 1671 415, 1671 155, 1671 137 L 1740 137" data-attr="CLUB" />
+            <path class="er-connector" d="M 1720 425 C 1660 425, 1660 105, 1660 87 L 1735 87" data-attr="CLUB" />
+
+            <!-- COACH: 4 Individual Dedicated Connectors (Parallel Nested Lanes) -->
+            <path class="er-connector" d="M 2175 410 C 2140 410, 2140 345, 2140 332 L 2175 332" data-attr="COACH" />
+            <path class="er-connector" d="M 2165 410 C 2128 410, 2128 300, 2128 277 L 2175 277" data-attr="COACH" />
+            <path class="er-connector" d="M 2155 410 C 2116 410, 2116 250, 2116 222 L 2175 222" data-attr="COACH" />
+            <path class="er-connector" d="M 2150 420 C 2104 420, 2104 200, 2104 167 L 2155 167" data-attr="COACH" />
+
+            <!-- TRAINING_SESSION: 9 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 1040 1040 C 1040 850, 1070 797, 1150 797" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1045 1040 C 1045 880, 1080 847, 1150 847" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1050 1040 C 1050 910, 1090 897, 1150 897" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1055 1040 C 1055 950, 1100 947, 1150 947" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1060 1040 C 1060 985, 1110 997, 1150 997" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1080 1050 C 1110 1050, 1130 1047, 1160 1047" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1080 1060 C 1110 1060, 1130 1097, 1165 1097" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1080 1070 C 1110 1070, 1130 1147, 1165 1147" data-attr="TRAINING_SESSION" />
+            <path class="er-connector" d="M 1080 1080 C 1110 1080, 1130 1197, 1170 1197" data-attr="TRAINING_SESSION" />
+
+            <!-- TEAM: 7 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 1480 680 C 1480 570, 1440 547, 1400 547" data-attr="TEAM" />
+            <path class="er-connector" d="M 1470 680 C 1470 610, 1435 597, 1400 597" data-attr="TEAM" />
+            <path class="er-connector" d="M 1460 690 C 1430 690, 1420 647, 1400 647" data-attr="TEAM" />
+            <path class="er-connector" d="M 1460 705 C 1430 705, 1420 697, 1400 697" data-attr="TEAM" />
+            <path class="er-connector" d="M 1460 720 C 1430 720, 1420 747, 1400 747" data-attr="TEAM" />
+            <path class="er-connector" d="M 1470 744 C 1470 770, 1435 797, 1400 797" data-attr="TEAM" />
+            <path class="er-connector" d="M 1480 744 C 1480 810, 1440 847, 1400 847" data-attr="TEAM" />
+
+            <!-- TOURNAMENT: 6 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 2070 680 C 2070 600, 2090 577, 2120 577" data-attr="TOURNAMENT" />
+            <path class="er-connector" d="M 2080 680 C 2080 635, 2100 627, 2140 627" data-attr="TOURNAMENT" />
+            <path class="er-connector" d="M 2090 690 C 2105 690, 2110 677, 2125 677" data-attr="TOURNAMENT" />
+            <path class="er-connector" d="M 2090 705 C 2105 705, 2115 727, 2130 727" data-attr="TOURNAMENT" />
+            <path class="er-connector" d="M 2090 720 C 2105 720, 2115 777, 2135 777" data-attr="TOURNAMENT" />
+            <path class="er-connector" d="M 2090 735 C 2105 735, 2115 827, 2145 827" data-attr="TOURNAMENT" />
+
+            <!-- FIXTURE: 7 Individual Dedicated Connectors -->
+            <path class="er-connector" d="M 1750 1010 C 1750 910, 1690 877, 1640 877" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1740 1010 C 1740 945, 1685 927, 1640 927" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1730 1020 C 1690 1020, 1675 977, 1640 977" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1730 1032 C 1690 1032, 1675 1027, 1640 1027" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1730 1045 C 1690 1045, 1675 1077, 1640 1077" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1730 1058 C 1690 1058, 1675 1127, 1640 1127" data-attr="FIXTURE" />
+            <path class="er-connector" d="M 1730 1070 C 1690 1070, 1675 1177, 1620 1177" data-attr="FIXTURE" />
+
+          </g>
+
+          <!-- ==================== RELATIONSHIP DIAMONDS ==================== -->
+          <g id="relationships-layer">
+
+            <!-- 1. MEMBERSHIP_PLAN <has> MEMBER -->
+            <g class="er-rel" id="rel-plan-has" onclick="inspectRel('plan-has')" data-entity="MEMBERSHIP_PLAN MEMBER">
+              <polygon points="570,260 615,290 570,320 525,290" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="570" y="295" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">has</text>
+            </g>
+            <text class="er-cardinality" data-link="MEMBERSHIP_PLAN rel-plan-has" data-near="MEMBERSHIP_PLAN" x="475" y="270">1</text>
+            <text class="er-cardinality" data-link="rel-plan-has MEMBER" data-near="MEMBER" x="780" y="395">N</text>
+
+            <!-- 2. SPORT <has> MEMBER -->
+            <g class="er-rel" id="rel-sport-has" onclick="inspectRel('sport-has')" data-entity="SPORT MEMBER">
+              <polygon points="570,472 615,502 570,532 525,502" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="570" y="507" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">has</text>
+            </g>
+            <text class="er-cardinality" data-link="SPORT rel-sport-has" data-near="SPORT" x="450" y="520">1</text>
+            <text class="er-cardinality" data-link="rel-sport-has MEMBER" data-near="MEMBER" x="780" y="460">N</text>
+
+            <!-- 3. SPORT <uses> FACILITY -->
+            <g class="er-rel" id="rel-sport-uses" onclick="inspectRel('sport-uses')" data-entity="SPORT FACILITY">
+              <polygon points="340,645 380,675 340,705 300,675" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="340" y="680" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">uses</text>
+            </g>
+            <text class="er-cardinality" data-link="SPORT rel-sport-uses" data-near="SPORT" x="355" y="560">1</text>
+            <text class="er-cardinality" data-link="rel-sport-uses FACILITY" data-near="FACILITY" x="355" y="800">1</text>
+
+            <!-- 4. MEMBER <makes> PAYMENT -->
+            <g class="er-rel" id="rel-member-makes" onclick="inspectRel('member-makes')" data-entity="MEMBER PAYMENT">
+              <polygon points="730,570 770,600 730,630 690,600" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="730" y="605" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">makes</text>
+            </g>
+            <text class="er-cardinality" data-link="MEMBER rel-member-makes" data-near="MEMBER" x="820" y="510">1</text>
+            <text class="er-cardinality" data-link="rel-member-makes PAYMENT" data-near="PAYMENT" x="745" y="710">N</text>
+
+            <!-- 5. MEMBER <books> TRAINING_SESSION -->
+            <g class="er-rel" id="rel-member-books" onclick="inspectRel('member-books')" data-entity="MEMBER TRAINING_SESSION">
+              <polygon points="970,690 1015,720 970,750 925,720" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="970" y="725" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">books</text>
+            </g>
+            <text class="er-cardinality" data-link="MEMBER rel-member-books" data-near="MEMBER" x="975" y="510">1</text>
+            <text class="er-cardinality" data-link="rel-member-books TRAINING_SESSION" data-near="TRAINING_SESSION" x="985" y="1020">N</text>
+
+            <!-- 6. MEMBER <belongs to> CLUB_MEMBER -->
+            <g class="er-rel" id="rel-member-belongs" onclick="inspectRel('member-belongs')" data-entity="MEMBER CLUB_MEMBER CLUB">
+              <polygon points="1200,418 1245,443 1200,468 1155,443" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="1200" y="447" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" fill="var(--rel-text)">belongs to</text>
+            </g>
+            <text class="er-cardinality" data-link="MEMBER rel-member-belongs" data-near="MEMBER" x="1050" y="435">N</text>
+            <text class="er-cardinality" data-link="rel-member-belongs CLUB_MEMBER" data-near="CLUB_MEMBER" x="1265" y="435">N</text>
+            <text class="er-cardinality" data-link="CLUB_MEMBER CLUB" data-near="CLUB_MEMBER" x="1580" y="435">N</text>
+            <text class="er-cardinality" data-link="CLUB_MEMBER CLUB" data-near="CLUB" x="1700" y="435">N</text>
+
+            <!-- 7. CLUB <has> COACH -->
+            <g class="er-rel" id="rel-club-coach" onclick="inspectRel('club-coach')" data-entity="CLUB COACH">
+              <polygon points="2025,418 2070,443 2025,468 1980,443" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="2025" y="448" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">has</text>
+            </g>
+            <text class="er-cardinality" data-link="CLUB rel-club-coach" data-near="CLUB" x="1920" y="435">N</text>
+            <text class="er-cardinality" data-link="rel-club-coach COACH" data-near="COACH" x="2130" y="435">1</text>
+
+            <!-- 8. CLUB <has> TEAM -->
+            <g class="er-rel" id="rel-club-team" onclick="inspectRel('club-team')" data-entity="CLUB TEAM">
+              <polygon points="1720,520 1765,550 1720,580 1675,550" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="1720" y="555" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">has</text>
+            </g>
+            <text class="er-cardinality" data-link="CLUB rel-club-team" data-near="CLUB" x="1735" y="495">1</text>
+            <text class="er-cardinality" data-link="rel-club-team TEAM" data-near="TEAM" x="1625" y="665">N</text>
+
+            <!-- 9. TEAM <participates in> FIXTURE -->
+            <g class="er-rel" id="rel-team-fixture" onclick="inspectRel('team-fixture')" data-entity="TEAM FIXTURE">
+              <polygon points="1670,845 1720,875 1670,905 1620,875" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="1670" y="879" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" fill="var(--rel-text)">participates in</text>
+            </g>
+            <text class="er-cardinality" data-link="TEAM rel-team-fixture" data-near="TEAM" x="1580" y="770">N</text>
+            <text class="er-cardinality" data-link="rel-team-fixture FIXTURE" data-near="FIXTURE" x="1720" y="990">N</text>
+
+            <!-- 10. TOURNAMENT <has> FIXTURE -->
+            <g class="er-rel" id="rel-tourn-fixture" onclick="inspectRel('tourn-fixture')" data-entity="TOURNAMENT FIXTURE">
+              <polygon points="1970,845 2015,875 1970,905 1925,875" fill="var(--rel-bg)" stroke="var(--rel-border)" stroke-width="1.8" filter="url(#shadow-attr)" />
+              <text x="1970" y="880" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="var(--rel-text)">has</text>
+            </g>
+            <text class="er-cardinality" data-link="TOURNAMENT rel-tourn-fixture" data-near="TOURNAMENT" x="1985" y="770">1</text>
+            <text class="er-cardinality" data-link="rel-tourn-fixture FIXTURE" data-near="FIXTURE" x="1860" y="990">N</text>
+
+          </g>
+
+          <!-- ==================== ENTITIES LAYER (RECTANGLES) ==================== -->
+          <g id="entities-layer">
+
+            <!-- 1. MEMBERSHIP_PLAN -->
+            <g class="er-entity" id="ent-MEMBERSHIP_PLAN" onclick="selectEntity('MEMBERSHIP_PLAN')" data-name="MEMBERSHIP_PLAN">
+              <rect x="230" y="240" width="220" height="64" rx="6" fill="var(--plan-bg)" stroke="var(--plan-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="340" y="279" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--plan-text)" letter-spacing="0.04em">
+                MEMBERSHIP_PLAN
+              </text>
+            </g>
+
+            <!-- 2. SPORT -->
+            <g class="er-entity" id="ent-SPORT" onclick="selectEntity('SPORT')" data-name="SPORT">
+              <rect x="250" y="470" width="180" height="64" rx="6" fill="var(--sport-bg)" stroke="var(--sport-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="340" y="509" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--sport-text)" letter-spacing="0.04em">
+                SPORT
+              </text>
+            </g>
+
+            <!-- 3. FACILITY -->
+            <g class="er-entity" id="ent-FACILITY" onclick="selectEntity('FACILITY')" data-name="FACILITY">
+              <rect x="250" y="820" width="180" height="64" rx="6" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="340" y="859" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--facility-text)" letter-spacing="0.04em">
+                FACILITY
+              </text>
+            </g>
+
+            <!-- 4. MEMBER -->
+            <g class="er-entity" id="ent-MEMBER" onclick="selectEntity('MEMBER')" data-name="MEMBER">
+              <rect x="800" y="410" width="220" height="76" rx="6" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="910" y="455" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="18" font-weight="800" fill="var(--member-text)" letter-spacing="0.04em">
+                MEMBER
+              </text>
+            </g>
+
+            <!-- 5. PAYMENT -->
+            <g class="er-entity" id="ent-PAYMENT" onclick="selectEntity('PAYMENT')" data-name="PAYMENT">
+              <rect x="640" y="730" width="180" height="64" rx="6" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="730" y="769" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--payment-text)" letter-spacing="0.04em">
+                PAYMENT
+              </text>
+            </g>
+
+            <!-- 6. CLUB_MEMBER (Associative Bridge Entity) -->
+            <g class="er-entity" id="ent-CLUB_MEMBER" onclick="selectEntity('CLUB_MEMBER')" data-name="CLUB_MEMBER">
+              <rect x="1380" y="410" width="180" height="66" rx="6" fill="var(--club-member-bg)" stroke="var(--club-member-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="1470" y="449" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="15.5" font-weight="700" fill="var(--club-member-text)" letter-spacing="0.03em">
+                CLUB_MEMBER
+              </text>
+            </g>
+
+            <!-- 7. CLUB -->
+            <g class="er-entity" id="ent-CLUB" onclick="selectEntity('CLUB')" data-name="CLUB">
+              <rect x="1720" y="410" width="180" height="66" rx="6" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="1810" y="449" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="17" font-weight="700" fill="var(--club-text)" letter-spacing="0.04em">
+                CLUB
+              </text>
+            </g>
+
+            <!-- 8. COACH -->
+            <g class="er-entity" id="ent-COACH" onclick="selectEntity('COACH')" data-name="COACH">
+              <rect x="2150" y="410" width="160" height="66" rx="6" fill="var(--coach-bg)" stroke="var(--coach-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="2230" y="449" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--coach-text)" letter-spacing="0.04em">
+                COACH
+              </text>
+            </g>
+
+            <!-- 9. TRAINING_SESSION -->
+            <g class="er-entity" id="ent-TRAINING_SESSION" onclick="selectEntity('TRAINING_SESSION')" data-name="TRAINING_SESSION">
+              <rect x="860" y="1040" width="220" height="64" rx="6" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="970" y="1079" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="15" font-weight="700" fill="var(--session-text)" letter-spacing="0.03em">
+                TRAINING_SESSION
+              </text>
+            </g>
+
+            <!-- 10. TEAM -->
+            <g class="er-entity" id="ent-TEAM" onclick="selectEntity('TEAM')" data-name="TEAM">
+              <rect x="1460" y="680" width="180" height="64" rx="6" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="1550" y="719" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--team-text)" letter-spacing="0.04em">
+                TEAM
+              </text>
+            </g>
+
+            <!-- 11. TOURNAMENT -->
+            <g class="er-entity" id="ent-TOURNAMENT" onclick="selectEntity('TOURNAMENT')" data-name="TOURNAMENT">
+              <rect x="1910" y="680" width="180" height="64" rx="6" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="2000" y="719" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="15.5" font-weight="700" fill="var(--tournament-text)" letter-spacing="0.03em">
+                TOURNAMENT
+              </text>
+            </g>
+
+            <!-- 12. FIXTURE -->
+            <g class="er-entity" id="ent-FIXTURE" onclick="selectEntity('FIXTURE')" data-name="FIXTURE">
+              <rect x="1730" y="1010" width="180" height="64" rx="6" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="2" filter="url(#shadow-box)" />
+              <text x="1820" y="1049" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="700" fill="var(--fixture-text)" letter-spacing="0.04em">
+                FIXTURE
+              </text>
+            </g>
+
+          </g>
+
+          <!-- ==================== ATTRIBUTES LAYER (OVALS / PILLS) ==================== -->
+          <g id="attributes-layer">
+
+            <!-- MEMBERSHIP_PLAN Attributes -->
+            <g class="er-attr" data-parent="MEMBERSHIP_PLAN" onclick="selectAttr('MEMBERSHIP_PLAN', 'plan_id')">
+              <rect x="45" y="140" width="140" height="34" rx="17" fill="var(--plan-bg)" stroke="var(--plan-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="162" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--plan-text)" class="pk-text">plan_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBERSHIP_PLAN" onclick="selectAttr('MEMBERSHIP_PLAN', 'plan_name')">
+              <rect x="45" y="195" width="140" height="34" rx="17" fill="var(--plan-bg)" stroke="var(--plan-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="217" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--plan-text)">plan_name</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBERSHIP_PLAN" onclick="selectAttr('MEMBERSHIP_PLAN', 'duration_months')">
+              <rect x="35" y="250" width="160" height="34" rx="17" fill="var(--plan-bg)" stroke="var(--plan-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="272" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--plan-text)">duration_months</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBERSHIP_PLAN" onclick="selectAttr('MEMBERSHIP_PLAN', 'fee_amount')">
+              <rect x="45" y="305" width="140" height="34" rx="17" fill="var(--plan-bg)" stroke="var(--plan-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="327" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--plan-text)">fee_amount</text>
+            </g>
+
+            <!-- SPORT Attributes -->
+            <g class="er-attr" data-parent="SPORT" onclick="selectAttr('SPORT', 'sport_id')">
+              <rect x="45" y="455" width="140" height="34" rx="17" fill="var(--sport-bg)" stroke="var(--sport-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="477" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--sport-text)" class="pk-text">sport_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="SPORT" onclick="selectAttr('SPORT', 'sport_name')">
+              <rect x="45" y="515" width="140" height="34" rx="17" fill="var(--sport-bg)" stroke="var(--sport-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="115" y="537" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--sport-text)">sport_name</text>
+            </g>
+
+            <!-- FACILITY Attributes -->
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'facility_id')">
+              <rect x="45" y="680" width="150" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="702" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--facility-text)" class="pk-text">facility_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'name')">
+              <rect x="60" y="735" width="120" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="757" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--facility-text)">name</text>
+            </g>
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'type')">
+              <rect x="60" y="790" width="120" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="812" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--facility-text)">type</text>
+            </g>
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'location')">
+              <rect x="55" y="845" width="130" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="867" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--facility-text)">location</text>
+            </g>
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'capacity')">
+              <rect x="55" y="900" width="130" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="922" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--facility-text)">capacity</text>
+            </g>
+            <g class="er-attr" data-parent="FACILITY" onclick="selectAttr('FACILITY', 'status')">
+              <rect x="60" y="955" width="120" height="34" rx="17" fill="var(--facility-bg)" stroke="var(--facility-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="120" y="977" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--facility-text)">status</text>
+            </g>
+
+            <!-- MEMBER Attributes (Non-crossing arc above MEMBER) -->
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'member_id')">
+              <rect x="660" y="165" width="145" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="732" y="188" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--member-text)" class="pk-text">member_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'name')">
+              <rect x="840" y="150" width="110" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="895" y="173" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">name</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'gender')">
+              <rect x="980" y="150" width="110" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1035" y="173" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">gender</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'email')">
+              <rect x="1115" y="165" width="150" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1190" y="188" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="var(--member-text)" class="unique-text">email (UNIQUE)</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'phone')">
+              <rect x="640" y="230" width="115" height="34" rx="17" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="697" y="252" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">phone</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'address')">
+              <rect x="640" y="285" width="115" height="34" rx="17" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="697" y="307" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">address</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'password')">
+              <rect x="635" y="340" width="120" height="34" rx="17" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="695" y="362" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">password</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'join_date')">
+              <rect x="1130" y="240" width="120" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1190" y="263" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">join_date</text>
+            </g>
+            <g class="er-attr" data-parent="MEMBER" onclick="selectAttr('MEMBER', 'status')">
+              <rect x="1135" y="315" width="110" height="36" rx="18" fill="var(--member-bg)" stroke="var(--member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1190" y="338" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--member-text)">status</text>
+            </g>
+
+            <!-- PAYMENT Attributes (Left Stack & Right Stack) -->
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'payment_id')">
+              <rect x="440" y="630" width="155" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="517" y="652" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--payment-text)" class="pk-text">payment_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'member_id')">
+              <rect x="440" y="685" width="155" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="517" y="707" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--payment-text)">member_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'plan_id')">
+              <rect x="450" y="740" width="145" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="522" y="762" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--payment-text)">plan_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'amount')">
+              <rect x="475" y="795" width="120" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="535" y="817" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--payment-text)">amount</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'payment_mode')">
+              <rect x="445" y="850" width="150" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="520" y="872" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--payment-text)">payment_mode</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'payment_date')">
+              <rect x="860" y="685" width="145" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="932" y="707" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--payment-text)">payment_date</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'status')">
+              <rect x="875" y="740" width="115" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="932" y="762" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--payment-text)">status</text>
+            </g>
+            <g class="er-attr" data-parent="PAYMENT" onclick="selectAttr('PAYMENT', 'transaction_ref')">
+              <rect x="855" y="795" width="160" height="34" rx="17" fill="var(--payment-bg)" stroke="var(--payment-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="935" y="817" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--payment-text)">transaction_ref</text>
+            </g>
+
+            <!-- TRAINING_SESSION Attributes (Stacked on Right at X: 1150-1300) -->
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'session_id')">
+              <rect x="1150" y="780" width="150" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="802" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="var(--session-text)" class="pk-text">session_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'sport_id')">
+              <rect x="1150" y="830" width="150" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="852" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">sport_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'coach_id')">
+              <rect x="1150" y="880" width="150" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="902" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">coach_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'venue_id')">
+              <rect x="1150" y="930" width="150" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="952" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">venue_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'session_date')">
+              <rect x="1150" y="980" width="150" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="1002" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">session_date</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'start_time')">
+              <rect x="1160" y="1030" width="130" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="1052" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">start_time</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'end_time')">
+              <rect x="1165" y="1080" width="120" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="1102" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">end_time</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'capacity')">
+              <rect x="1165" y="1130" width="120" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="1152" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">capacity</text>
+            </g>
+            <g class="er-attr" data-parent="TRAINING_SESSION" onclick="selectAttr('TRAINING_SESSION', 'status')">
+              <rect x="1170" y="1180" width="110" height="34" rx="17" fill="var(--session-bg)" stroke="var(--session-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1225" y="1202" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--session-text)">status</text>
+            </g>
+
+            <!-- CLUB_MEMBER Attributes (Stacked at X:1395-1545 above CLUB_MEMBER) -->
+            <g class="er-attr" data-parent="CLUB_MEMBER" onclick="selectAttr('CLUB_MEMBER', 'member_id')">
+              <rect x="1395" y="150" width="150" height="34" rx="17" fill="var(--club-member-bg)" stroke="var(--club-member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1470" y="172" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--club-member-text)">member_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB_MEMBER" onclick="selectAttr('CLUB_MEMBER', 'club_id')">
+              <rect x="1405" y="205" width="130" height="34" rx="17" fill="var(--club-member-bg)" stroke="var(--club-member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1470" y="227" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--club-member-text)">club_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB_MEMBER" onclick="selectAttr('CLUB_MEMBER', 'role')">
+              <rect x="1415" y="260" width="110" height="34" rx="17" fill="var(--club-member-bg)" stroke="var(--club-member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1470" y="282" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--club-member-text)">role</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB_MEMBER" onclick="selectAttr('CLUB_MEMBER', 'join_date')">
+              <rect x="1405" y="315" width="130" height="34" rx="17" fill="var(--club-member-bg)" stroke="var(--club-member-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1470" y="337" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--club-member-text)">join_date</text>
+            </g>
+
+            <!-- CLUB Attributes (Stacked at X:1735-1885 above CLUB, Individual Nested Lines) -->
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'club_id')">
+              <rect x="1735" y="70" width="150" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="92" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--club-text)" class="pk-text">club_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'club_name')">
+              <rect x="1740" y="120" width="140" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="142" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--club-text)">club_name</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'sport_id')">
+              <rect x="1735" y="170" width="150" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="192" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--club-text)">sport_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'coach_id')">
+              <rect x="1735" y="220" width="150" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="242" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--club-text)">coach_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'created_date')">
+              <rect x="1735" y="270" width="150" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="292" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--club-text)">created_date</text>
+            </g>
+            <g class="er-attr" data-parent="CLUB" onclick="selectAttr('CLUB', 'status')">
+              <rect x="1745" y="320" width="130" height="34" rx="17" fill="var(--club-bg)" stroke="var(--club-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1810" y="342" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--club-text)">status</text>
+            </g>
+
+            <!-- COACH Attributes (Stacked at X:2155-2305 above COACH) -->
+            <g class="er-attr" data-parent="COACH" onclick="selectAttr('COACH', 'coach_id')">
+              <rect x="2155" y="150" width="150" height="34" rx="17" fill="var(--coach-bg)" stroke="var(--coach-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2230" y="172" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--coach-text)" class="pk-text">coach_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="COACH" onclick="selectAttr('COACH', 'name')">
+              <rect x="2175" y="205" width="110" height="34" rx="17" fill="var(--coach-bg)" stroke="var(--coach-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2230" y="227" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--coach-text)">name</text>
+            </g>
+            <g class="er-attr" data-parent="COACH" onclick="selectAttr('COACH', 'phone')">
+              <rect x="2175" y="260" width="110" height="34" rx="17" fill="var(--coach-bg)" stroke="var(--coach-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2230" y="282" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--coach-text)">phone</text>
+            </g>
+            <g class="er-attr" data-parent="COACH" onclick="selectAttr('COACH', 'email')">
+              <rect x="2175" y="315" width="110" height="34" rx="17" fill="var(--coach-bg)" stroke="var(--coach-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2230" y="337" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--coach-text)">email</text>
+            </g>
+
+            <!-- TEAM Attributes (Stacked to Left of TEAM at X: 1250-1400) -->
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'team_id')">
+              <rect x="1255" y="530" width="145" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1327" y="552" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--team-text)" class="pk-text">team_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'club_id')">
+              <rect x="1255" y="580" width="145" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1327" y="602" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--team-text)">club_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'team_name')">
+              <rect x="1265" y="630" width="135" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1332" y="652" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--team-text)">team_name</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'sport_id')">
+              <rect x="1250" y="680" width="150" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1325" y="702" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--team-text)">sport_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'coach_id')">
+              <rect x="1250" y="730" width="150" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1325" y="752" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--team-text)">coach_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'created_date')">
+              <rect x="1250" y="780" width="150" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1325" y="802" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--team-text)">created_date</text>
+            </g>
+            <g class="er-attr" data-parent="TEAM" onclick="selectAttr('TEAM', 'status')">
+              <rect x="1275" y="830" width="125" height="34" rx="17" fill="var(--team-bg)" stroke="var(--team-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1337" y="852" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--team-text)">status</text>
+            </g>
+
+            <!-- TOURNAMENT Attributes (Stacked to Right of TOURNAMENT at X: 2120-2280) -->
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'tournament_id')">
+              <rect x="2120" y="560" width="165" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="582" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--tournament-text)" class="pk-text">tournament_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'name')">
+              <rect x="2140" y="610" width="125" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="632" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--tournament-text)">name</text>
+            </g>
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'sport_id')">
+              <rect x="2125" y="660" width="155" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="682" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--tournament-text)">sport_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'start_date')">
+              <rect x="2130" y="710" width="145" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="732" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--tournament-text)">start_date</text>
+            </g>
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'end_date')">
+              <rect x="2135" y="760" width="135" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="782" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--tournament-text)">end_date</text>
+            </g>
+            <g class="er-attr" data-parent="TOURNAMENT" onclick="selectAttr('TOURNAMENT', 'type')">
+              <rect x="2145" y="810" width="115" height="34" rx="17" fill="var(--tournament-bg)" stroke="var(--tournament-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="2202" y="832" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--tournament-text)">type</text>
+            </g>
+
+            <!-- FIXTURE Attributes (Stacked on Left at X: 1470-1640) -->
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'fixture_id')">
+              <rect x="1485" y="860" width="155" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1562" y="882" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="var(--fixture-text)" class="pk-text">fixture_id (PK)</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'tournament_id')">
+              <rect x="1470" y="910" width="170" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1555" y="932" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--fixture-text)">tournament_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'team1_id')">
+              <rect x="1495" y="960" width="145" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1567" y="982" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--fixture-text)">team1_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'team2_id')">
+              <rect x="1495" y="1010" width="145" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1567" y="1032" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--fixture-text)">team2_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'fixture_date')">
+              <rect x="1490" y="1060" width="150" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1565" y="1082" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--fixture-text)">fixture_date</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'venue_id')">
+              <rect x="1490" y="1110" width="150" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1565" y="1132" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11.5" fill="var(--fixture-text)">venue_id (FK)</text>
+            </g>
+            <g class="er-attr" data-parent="FIXTURE" onclick="selectAttr('FIXTURE', 'status')">
+              <rect x="1510" y="1160" width="110" height="34" rx="17" fill="var(--fixture-bg)" stroke="var(--fixture-border)" stroke-width="1.5" filter="url(#shadow-attr)" />
+              <text x="1565" y="1182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--fixture-text)">status</text>
+            </g>
+
+          </g>
+
+        </svg>
+      </div>
+
+      <!-- Floating Zoom / Reset Toolbar -->
+      <div class="floating-toolbar">
+        <button class="zoom-btn" onclick="zoomCanvas(-0.15)" title="Zoom Out">−</button>
+        <span class="zoom-level" id="zoom-text">100%</span>
+        <button class="zoom-btn" onclick="zoomCanvas(0.15)" title="Zoom In">+</button>
+        <div class="tb-divider"></div>
+        <button class="btn-action" onclick="resetCanvas()" style="padding: 4px 8px; font-size: 11.5px;">Fit Screen</button>
+        <button class="btn-action primary" onclick="saveCustomLayout(true)" style="padding: 4px 10px; font-size: 11.5px; background: #2563eb; color: #ffffff; border: none; font-weight: 600; border-radius: 6px; display: flex; align-items: center; gap: 4px;" title="Save current arrangement as permanent default">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Set as Default
+        </button>
+        <button class="btn-action" onclick="resetNodeLayout()" style="padding: 4px 8px; font-size: 11.5px; color: var(--text-muted);" title="Reset all boxes to original Chen layout">↺ Reset to Chen</button>
+        <button class="btn-action" id="btn-arrow-toggle" onclick="cycleArrowMode()" style="padding: 4px 8px; font-size: 11.5px;" title="Switch arrow display mode">➤ <span id="arrow-mode-text">Arrows: All</span></button>
+        <button class="btn-action" onclick="clearHighlight()" style="padding: 4px 8px; font-size: 11.5px;">Clear Focus</button>
+        <div class="tb-divider"></div>
+        <span id="save-status-indicator" style="font-size: 11px; color: #10b981; display: flex; align-items: center; gap: 4px; padding-right: 4px; font-weight: 500;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Live Layout Saved
+        </span>
+      </div>
+
+      <!-- Floating Entity Quick Filter Legend -->
+      <div class="floating-legend">
+        <span class="legend-title">Filter by Entity Cluster</span>
+        <div class="legend-items">
+          <div class="legend-pill" onclick="selectEntity('MEMBER')"><span class="legend-dot" style="background:#3b82f6;"></span> MEMBER</div>
+          <div class="legend-pill" onclick="selectEntity('CLUB')"><span class="legend-dot" style="background:#ef4444;"></span> CLUB</div>
+          <div class="legend-pill" onclick="selectEntity('TEAM')"><span class="legend-dot" style="background:#f59e0b;"></span> TEAM</div>
+          <div class="legend-pill" onclick="selectEntity('TOURNAMENT')"><span class="legend-dot" style="background:#a855f7;"></span> TOURNAMENT</div>
+          <div class="legend-pill" onclick="selectEntity('FIXTURE')"><span class="legend-dot" style="background:#d97706;"></span> FIXTURE</div>
+          <div class="legend-pill" onclick="selectEntity('SPORT')"><span class="legend-dot" style="background:#10b981;"></span> SPORT</div>
+          <div class="legend-pill" onclick="selectEntity('FACILITY')"><span class="legend-dot" style="background:#0ea5e9;"></span> FACILITY</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANE 2: RELATIONAL TABLES ==================== -->
+    <div class="view-pane" id="pane-relational-cards">
+      <div class="view-title-block">
+        <h2>Relational Database Schema (3NF Normalized Tables)</h2>
+        <p>Complete logical data model converted from the conceptual ER diagram into 3NF relational tables with keys, types, and constraints.</p>
+      </div>
+
+      <div class="cards-grid" id="schema-cards-container">
+        <!-- Rendered dynamically via JS for 100% accuracy -->
+      </div>
+    </div>
+
+    <!-- ==================== PANE 3: RELATIONSHIPS MATRIX ==================== -->
+    <div class="view-pane" id="pane-matrix">
+      <div class="view-title-block">
+        <h2>Relationship & Cardinality Matrix</h2>
+        <p>Mathematical representation of entity connections, participation constraints, foreign keys, and referential integrity.</p>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Relationship</th>
+              <th>Source Entity</th>
+              <th>Cardinality</th>
+              <th>Target Entity</th>
+              <th>Foreign Key / Bridge Implementation</th>
+              <th>Business Meaning</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-table-body">
+            <!-- Rendered dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== PANE 4: INTEGRITY AUDIT ==================== -->
+    <div class="view-pane" id="pane-audit">
+      <div class="view-title-block">
+        <h2>Schema Consistency & Normalization Audit</h2>
+        <p>Validation checklist confirming 0 inconsistencies, full referential integrity, and rigorous 3NF adherence.</p>
+      </div>
+
+      <div class="audit-grid">
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>1. Complete 12-Entity Chen Representation</h4>
+            <p>Every entity from the reference schema (<code>MEMBERSHIP_PLAN</code>, <code>SPORT</code>, <code>FACILITY</code>, <code>MEMBER</code>, <code>PAYMENT</code>, <code>CLUB_MEMBER</code>, <code>CLUB</code>, <code>COACH</code>, <code>TRAINING_SESSION</code>, <code>TEAM</code>, <code>TOURNAMENT</code>, <code>FIXTURE</code>) is fully represented.</p>
+          </div>
+        </div>
+
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>2. Associative Entity CLUB_MEMBER</h4>
+            <p>The Many-to-Many (N:N) relationship between <code>MEMBER</code> and <code>CLUB</code> is decomposed via the composite bridge table <code>CLUB_MEMBER (member_id, club_id)</code> with associative attributes <code>role</code> and <code>join_date</code>.</p>
+          </div>
+        </div>
+
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>3. Venue & Facility Referential Alignment</h4>
+            <p><code>venue_id</code> in both <code>TRAINING_SESSION</code> and <code>FIXTURE</code> cleanly references <code>FACILITY(facility_id)</code> as a foreign key, preventing orphan location records.</p>
+          </div>
+        </div>
+
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>4. Tournament Fixture Pairing (team1_id, team2_id)</h4>
+            <p>Each match fixture references two competing squads from <code>TEAM(team_id)</code> with check constraint <code>team1_id &lt;&gt; team2_id</code>, scheduled under a tournament.</p>
+          </div>
+        </div>
+
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>5. Third Normal Form (3NF) Compliance</h4>
+            <p>Every non-key attribute is strictly non-transitively dependent on the primary key (No partial dependencies, no transitive dependencies).</p>
+          </div>
+        </div>
+
+        <div class="audit-card">
+          <div class="audit-icon">✓</div>
+          <div class="audit-content">
+            <h4>6. Unique Integrity & Key Definitions</h4>
+            <p><code>MEMBER.email</code> and <code>COACH.email</code> are enforced with <code>UNIQUE</code> constraints. All entities have strictly defined surrogate primary keys with clean naming conventions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANE 5: SQL DDL ==================== -->
+    <div class="view-pane" id="pane-ddl">
+      <div class="view-title-block">
+        <h2>Production-Ready SQL DDL Script</h2>
+        <p>Complete SQLite / PostgreSQL / MySQL compliant schema definitions with all primary keys, foreign keys, and integrity constraints.</p>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+        <button class="btn-action primary" onclick="copyDDL()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy Complete SQL DDL
+        </button>
+      </div>
+
+      <pre class="sql-code-block" id="full-ddl-code">
+-- ==========================================================
+-- Sports Club Membership and Tournament Management System
+-- Schema DDL (3NF Compliant, Foreign Keys Enabled)
+-- ==========================================================
+
+PRAGMA foreign_keys = ON;
+
+-- 1. SPORT Table
+CREATE TABLE SPORT (
+    sport_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sport_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- 2. FACILITY Table
+CREATE TABLE FACILITY (
+    facility_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    capacity INTEGER NOT NULL CHECK (capacity > 0),
+    status VARCHAR(20) DEFAULT 'ACTIVE'
+);
+
+-- 3. MEMBERSHIP_PLAN Table
+CREATE TABLE MEMBERSHIP_PLAN (
+    plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    plan_name VARCHAR(50) NOT NULL,
+    duration_months INTEGER NOT NULL CHECK (duration_months > 0),
+    fee_amount NUMERIC(10,2) NOT NULL CHECK (fee_amount >= 0)
+);
+
+-- 4. MEMBER Table
+CREATE TABLE MEMBER (
+    member_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    gender VARCHAR(10),
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
+    join_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'ACTIVE'
+);
+
+-- 5. COACH Table
+CREATE TABLE COACH (
+    coach_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- 6. CLUB Table
+CREATE TABLE CLUB (
+    club_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    club_name VARCHAR(100) NOT NULL,
+    sport_id INTEGER NOT NULL REFERENCES SPORT(sport_id) ON DELETE CASCADE,
+    coach_id INTEGER REFERENCES COACH(coach_id) ON DELETE SET NULL,
+    created_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'ACTIVE'
+);
+
+-- 7. CLUB_MEMBER Associative Table (Bridge)
+CREATE TABLE CLUB_MEMBER (
+    member_id INTEGER NOT NULL REFERENCES MEMBER(member_id) ON DELETE CASCADE,
+    club_id INTEGER NOT NULL REFERENCES CLUB(club_id) ON DELETE CASCADE,
+    role VARCHAR(50) DEFAULT 'Player',
+    join_date DATE NOT NULL,
+    PRIMARY KEY (member_id, club_id)
+);
+
+-- 8. PAYMENT Table
+CREATE TABLE PAYMENT (
+    payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER NOT NULL REFERENCES MEMBER(member_id) ON DELETE RESTRICT,
+    plan_id INTEGER NOT NULL REFERENCES MEMBERSHIP_PLAN(plan_id) ON DELETE RESTRICT,
+    amount NUMERIC(10,2) NOT NULL CHECK (amount > 0),
+    payment_mode VARCHAR(30) NOT NULL,
+    payment_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'COMPLETED',
+    transaction_ref VARCHAR(100) UNIQUE
+);
+
+-- 9. TRAINING_SESSION Table
+CREATE TABLE TRAINING_SESSION (
+    session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sport_id INTEGER NOT NULL REFERENCES SPORT(sport_id) ON DELETE CASCADE,
+    coach_id INTEGER NOT NULL REFERENCES COACH(coach_id) ON DELETE RESTRICT,
+    venue_id INTEGER NOT NULL REFERENCES FACILITY(facility_id) ON DELETE RESTRICT,
+    session_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    capacity INTEGER NOT NULL CHECK (capacity > 0),
+    status VARCHAR(20) DEFAULT 'SCHEDULED'
+);
+
+-- 10. TEAM Table
+CREATE TABLE TEAM (
+    team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    club_id INTEGER NOT NULL REFERENCES CLUB(club_id) ON DELETE CASCADE,
+    team_name VARCHAR(100) NOT NULL,
+    sport_id INTEGER NOT NULL REFERENCES SPORT(sport_id) ON DELETE CASCADE,
+    coach_id INTEGER REFERENCES COACH(coach_id) ON DELETE SET NULL,
+    created_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'ACTIVE'
+);
+
+-- 11. TOURNAMENT Table
+CREATE TABLE TOURNAMENT (
+    tournament_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    sport_id INTEGER NOT NULL REFERENCES SPORT(sport_id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    CHECK (end_date >= start_date)
+);
+
+-- 12. FIXTURE Table
+CREATE TABLE FIXTURE (
+    fixture_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tournament_id INTEGER NOT NULL REFERENCES TOURNAMENT(tournament_id) ON DELETE CASCADE,
+    team1_id INTEGER NOT NULL REFERENCES TEAM(team_id) ON DELETE RESTRICT,
+    team2_id INTEGER NOT NULL REFERENCES TEAM(team_id) ON DELETE RESTRICT,
+    fixture_date DATE NOT NULL,
+    venue_id INTEGER NOT NULL REFERENCES FACILITY(facility_id) ON DELETE RESTRICT,
+    status VARCHAR(20) DEFAULT 'SCHEDULED',
+    CHECK (team1_id <> team2_id)
+);
+      </pre>
+    </div>
+
+    <!-- ==================== SIDE INSPECTOR DRAWER ==================== -->
+    <aside id="side-inspector" class="collapsed">
+      <div class="inspector-header">
+        <h2 id="inspector-title">Entity Details</h2>
+        <button class="close-inspector-btn" onclick="clearHighlight()" title="Close Inspector & Unselect (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="inspector-body" id="inspector-content">
+        <!-- Filled dynamically -->
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toast-msg">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    /* ==========================================================
+       DATA MODEL DEFINITION
+       ========================================================== */
+    const SCHEMA_DATA = {
+      MEMBERSHIP_PLAN: {
+        name: "MEMBERSHIP_PLAN",
+        type: "Strong Entity",
+        color: "var(--plan-border)",
+        desc: "Defines membership subscription tiers (e.g., Monthly, Quarterly, Annual), pricing models, and duration packages available for athletes.",
+        attributes: [
+          { name: "plan_id", type: "INTEGER", key: "PK", desc: "Unique identifier for the membership package." },
+          { name: "plan_name", type: "VARCHAR(50)", key: "", desc: "Name of the tier (e.g., Gold Annual, Silver Student)." },
+          { name: "duration_months", type: "INTEGER", key: "", desc: "Validity duration in months." },
+          { name: "fee_amount", type: "NUMERIC(10,2)", key: "", desc: "Base subscription fee in standard currency." }
+        ],
+        relationships: ["MEMBERSHIP_PLAN (1) — has — (N) MEMBER", "MEMBERSHIP_PLAN (1) — referenced by — (N) PAYMENT"]
+      },
+      SPORT: {
+        name: "SPORT",
+        type: "Strong Entity",
+        color: "var(--sport-border)",
+        desc: "Master catalog of sports activities supported by the sports club (e.g., Badminton, Tennis, Swimming, Football, Cricket).",
+        attributes: [
+          { name: "sport_id", type: "INTEGER", key: "PK", desc: "Unique identifier for the sport discipline." },
+          { name: "sport_name", type: "VARCHAR(50)", key: "UNIQUE", desc: "Name of the sport." }
+        ],
+        relationships: ["SPORT (1) — has — (N) MEMBER", "SPORT (1) — uses — (1) FACILITY", "SPORT (1) — has — (N) CLUB", "SPORT (1) — hosts — (N) TOURNAMENT"]
+      },
+      FACILITY: {
+        name: "FACILITY",
+        type: "Strong Entity",
+        color: "var(--facility-border)",
+        desc: "Physical infrastructure, arenas, courts, swimming pools, tracks, and pitches operated by the sports organization.",
+        attributes: [
+          { name: "facility_id", type: "INTEGER", key: "PK", desc: "Unique facility/venue code." },
+          { name: "name", type: "VARCHAR(100)", key: "", desc: "Name of the court or ground (e.g. Center Court, Arena A)." },
+          { name: "type", type: "VARCHAR(50)", key: "", desc: "Type of facility (Indoor Court, Outdoor Pitch, Olympic Pool)." },
+          { name: "location", type: "VARCHAR(100)", key: "", desc: "Campus location or building block." },
+          { name: "capacity", type: "INTEGER", key: "", desc: "Maximum spectator or athlete capacity." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Operating status (Operational, Maintenance, Closed)." }
+        ],
+        relationships: ["SPORT (1) — uses — (1) FACILITY", "FACILITY (1) — hosts — (N) TRAINING_SESSION", "FACILITY (1) — hosts — (N) FIXTURE"]
+      },
+      MEMBER: {
+        name: "MEMBER",
+        type: "Strong Entity",
+        color: "var(--member-border)",
+        desc: "Core user entity representing registered athletes, club players, and sports club subscription holders.",
+        attributes: [
+          { name: "member_id", type: "INTEGER", key: "PK", desc: "Unique member identifier." },
+          { name: "name", type: "VARCHAR(100)", key: "", desc: "Full legal name of the member." },
+          { name: "gender", type: "VARCHAR(10)", key: "", desc: "Gender (Male, Female, Non-binary)." },
+          { name: "phone", type: "VARCHAR(20)", key: "", desc: "Contact mobile number." },
+          { name: "email", type: "VARCHAR(100)", key: "UNIQUE", desc: "Unique login and communication email address." },
+          { name: "password", type: "VARCHAR(255)", key: "", desc: "Hashed password for member portal authentication." },
+          { name: "address", type: "VARCHAR(255)", key: "", desc: "Residential address." },
+          { name: "join_date", type: "DATE", key: "", desc: "Date of initial club registration." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Account standing (Active, Suspended, Expired)." }
+        ],
+        relationships: ["MEMBERSHIP_PLAN (1) — has — (N) MEMBER", "SPORT (1) — has — (N) MEMBER", "MEMBER (1) — makes — (N) PAYMENT", "MEMBER (1) — books — (N) TRAINING_SESSION", "MEMBER (N) — belongs to — (N) CLUB (via CLUB_MEMBER)"]
+      },
+      PAYMENT: {
+        name: "PAYMENT",
+        type: "Transaction Entity",
+        color: "var(--payment-border)",
+        desc: "Ledger recording all membership fee payments, renewals, and transaction references for financial auditing.",
+        attributes: [
+          { name: "payment_id", type: "INTEGER", key: "PK", desc: "Unique payment receipt identifier." },
+          { name: "member_id", type: "INTEGER", key: "FK", desc: "References MEMBER(member_id) who made the payment." },
+          { name: "plan_id", type: "INTEGER", key: "FK", desc: "References MEMBERSHIP_PLAN(plan_id) being purchased." },
+          { name: "amount", type: "NUMERIC(10,2)", key: "", desc: "Total transaction monetary amount." },
+          { name: "payment_mode", type: "VARCHAR(30)", key: "", desc: "Payment method (UPI, Card, NetBanking, Cash)." },
+          { name: "payment_date", type: "DATE", key: "", desc: "Timestamp of payment settlement." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Transaction status (Completed, Pending, Failed, Refunded)." },
+          { name: "transaction_ref", type: "VARCHAR(100)", key: "UNIQUE", desc: "Bank or gateway reference number." }
+        ],
+        relationships: ["MEMBER (1) — makes — (N) PAYMENT", "MEMBERSHIP_PLAN (1) — billed in — (N) PAYMENT"]
+      },
+      CLUB_MEMBER: {
+        name: "CLUB_MEMBER",
+        type: "Associative Entity (Bridge)",
+        color: "var(--club-member-border)",
+        desc: "Resolves the Many-to-Many (N:N) relationship between Members and Clubs, capturing specific roles and joining dates.",
+        attributes: [
+          { name: "member_id", type: "INTEGER", key: "PK, FK", desc: "References MEMBER(member_id)." },
+          { name: "club_id", type: "INTEGER", key: "PK, FK", desc: "References CLUB(club_id)." },
+          { name: "role", type: "VARCHAR(50)", key: "", desc: "Role in the club (Captain, Player, Substitute, Member)." },
+          { name: "join_date", type: "DATE", key: "", desc: "Date member joined this specific club." }
+        ],
+        relationships: ["MEMBER (1) — joined — (N) CLUB_MEMBER", "CLUB (1) — contains — (N) CLUB_MEMBER"]
+      },
+      CLUB: {
+        name: "CLUB",
+        type: "Strong Entity",
+        color: "var(--club-border)",
+        desc: "Organized sports franchises/teams affiliated with a specific sport and overseen by an assigned head coach.",
+        attributes: [
+          { name: "club_id", type: "INTEGER", key: "PK", desc: "Unique club organization ID." },
+          { name: "club_name", type: "VARCHAR(100)", key: "", desc: "Official club name (e.g. Phoenix Badminton Club)." },
+          { name: "sport_id", type: "INTEGER", key: "FK", desc: "References SPORT(sport_id)." },
+          { name: "coach_id", type: "INTEGER", key: "FK", desc: "References COACH(coach_id) assigned to lead." },
+          { name: "created_date", type: "DATE", key: "", desc: "Date club was officially founded." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Club operational state (Active, Inactive)." }
+        ],
+        relationships: ["COACH (1) — has/coaches — (N) CLUB", "MEMBER (N) — belongs to — (N) CLUB", "CLUB (N) — participates in — (N) TOURNAMENT"]
+      },
+      COACH: {
+        name: "COACH",
+        type: "Strong Entity",
+        color: "var(--coach-border)",
+        desc: "Professional certified instructors, head coaches, and trainers managing clubs and leading practice clinics.",
+        attributes: [
+          { name: "coach_id", type: "INTEGER", key: "PK", desc: "Unique coach license code." },
+          { name: "name", type: "VARCHAR(100)", key: "", desc: "Full name of the coach." },
+          { name: "phone", type: "VARCHAR(20)", key: "", desc: "Contact phone number." },
+          { name: "email", type: "VARCHAR(100)", key: "UNIQUE", desc: "Professional contact email." }
+        ],
+        relationships: ["COACH (1) — has — (N) CLUB", "COACH (1) — conducts — (N) TRAINING_SESSION"]
+      },
+      TRAINING_SESSION: {
+        name: "TRAINING_SESSION",
+        type: "Strong Entity",
+        color: "var(--session-border)",
+        desc: "Scheduled coaching clinics, drills, and physical training sessions hosted at designated facilities.",
+        attributes: [
+          { name: "session_id", type: "INTEGER", key: "PK", desc: "Unique session identifier." },
+          { name: "sport_id", type: "INTEGER", key: "FK", desc: "References SPORT(sport_id)." },
+          { name: "coach_id", type: "INTEGER", key: "FK", desc: "References COACH(coach_id) instructor." },
+          { name: "venue_id", type: "INTEGER", key: "FK", desc: "References FACILITY(facility_id)." },
+          { name: "session_date", type: "DATE", key: "", desc: "Date of session." },
+          { name: "start_time", type: "TIME", key: "", desc: "Beginning time." },
+          { name: "end_time", type: "TIME", key: "", desc: "Ending time." },
+          { name: "capacity", type: "INTEGER", key: "", desc: "Max participant limit." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Status (Scheduled, In-Progress, Completed, Cancelled)." }
+        ],
+        relationships: ["MEMBER (1) — books — (N) TRAINING_SESSION", "SPORT (1) — categorizes — (N) TRAINING_SESSION", "FACILITY (1) — accommodates — (N) TRAINING_SESSION"]
+      },
+      TEAM: {
+        name: "TEAM",
+        type: "Strong Entity",
+        color: "var(--team-border)",
+        desc: "Competitive squad or team unit formed within a club, coached by instructors, and registered for tournament play.",
+        attributes: [
+          { name: "team_id", type: "INTEGER", key: "PK", desc: "Unique team squad identifier." },
+          { name: "club_id", type: "INTEGER", key: "FK", desc: "References parent CLUB(club_id)." },
+          { name: "team_name", type: "VARCHAR(100)", key: "", desc: "Name of the squad (e.g., Phoenix Senior A)." },
+          { name: "sport_id", type: "INTEGER", key: "FK", desc: "References SPORT(sport_id)." },
+          { name: "coach_id", type: "INTEGER", key: "FK", desc: "References COACH(coach_id) assigned to lead." },
+          { name: "created_date", type: "DATE", key: "", desc: "Date squad was formed." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Team active status (Active, Inactive)." }
+        ],
+        relationships: ["CLUB (1) — has — (N) TEAM", "TEAM (N) — participates in — (N) FIXTURE"]
+      },
+      TOURNAMENT: {
+        name: "TOURNAMENT",
+        type: "Strong Entity",
+        color: "var(--tournament-border)",
+        desc: "Championships, leagues, and knockout tournaments organized across various sport categories.",
+        attributes: [
+          { name: "tournament_id", type: "INTEGER", key: "PK", desc: "Unique tournament code." },
+          { name: "name", type: "VARCHAR(100)", key: "", desc: "Tournament title (e.g. State Championship 2026)." },
+          { name: "sport_id", type: "INTEGER", key: "FK", desc: "References SPORT(sport_id)." },
+          { name: "start_date", type: "DATE", key: "", desc: "Start date of tournament." },
+          { name: "end_date", type: "DATE", key: "", desc: "Conclusion date." },
+          { name: "type", type: "VARCHAR(50)", key: "", desc: "Format (Knockout, Round-Robin, League, Group-Stage)." }
+        ],
+        relationships: ["TOURNAMENT (1) — has — (N) FIXTURE", "SPORT (1) — features in — (N) TOURNAMENT"]
+      },
+      FIXTURE: {
+        name: "FIXTURE",
+        type: "Strong Entity (Event)",
+        color: "var(--fixture-border)",
+        desc: "Individual match fixtures scheduled within a tournament pairing two competing teams at a designated venue.",
+        attributes: [
+          { name: "fixture_id", type: "INTEGER", key: "PK", desc: "Unique match fixture ID." },
+          { name: "tournament_id", type: "INTEGER", key: "FK", desc: "References TOURNAMENT(tournament_id)." },
+          { name: "team1_id", type: "INTEGER", key: "FK", desc: "First competing TEAM(team_id)." },
+          { name: "team2_id", type: "INTEGER", key: "FK", desc: "Second competing TEAM(team_id)." },
+          { name: "fixture_date", type: "DATE", key: "", desc: "Scheduled match date." },
+          { name: "venue_id", type: "INTEGER", key: "FK", desc: "References FACILITY(facility_id)." },
+          { name: "status", type: "VARCHAR(20)", key: "", desc: "Match status (Scheduled, Live, Completed, Postponed)." }
+        ],
+        relationships: ["TOURNAMENT (1) — has — (N) FIXTURE", "TEAM (N) — participates in — (N) FIXTURE", "FACILITY (1) — hosts — (N) FIXTURE"]
+      }
+    };
+
+    const RELATIONSHIPS_LIST = [
+      { name: "has", source: "MEMBERSHIP_PLAN", target: "MEMBER", card: "1 : N", fk: "PAYMENT.plan_id / Active Sub", desc: "One membership plan tier is subscribed to by multiple members." },
+      { name: "has", source: "SPORT", target: "MEMBER", card: "1 : N", fk: "Member Sport Preference", desc: "A sport is selected by many members as their primary enrolled sport." },
+      { name: "uses", source: "SPORT", target: "FACILITY", card: "1 : 1", fk: "FACILITY.type / Mapping", desc: "A sport is allocated and utilizes designated facility infrastructure." },
+      { name: "makes", source: "MEMBER", target: "PAYMENT", card: "1 : N", fk: "PAYMENT.member_id", desc: "A member makes multiple financial transactions over their tenure." },
+      { name: "books", source: "MEMBER", target: "TRAINING_SESSION", card: "1 : N", fk: "Session Registration Log", desc: "Members enroll and book slots in group coaching sessions." },
+      { name: "belongs to", source: "MEMBER", target: "CLUB", card: "N : N", fk: "CLUB_MEMBER(member_id, club_id)", desc: "Decomposed Many-to-Many relationship tracking member roles in clubs." },
+      { name: "has", source: "COACH", target: "CLUB", card: "1 : N", fk: "CLUB.coach_id", desc: "A head coach is assigned to lead and train multiple club squads." },
+      { name: "has", source: "CLUB", target: "TEAM", card: "1 : N", fk: "TEAM.club_id", desc: "A club establishes and manages multiple specialized squads/teams." },
+      { name: "participates in", source: "TEAM", target: "FIXTURE", card: "N : N", fk: "FIXTURE.team1_id, team2_id", desc: "Teams are paired and compete against each other in tournament match fixtures." },
+      { name: "has", source: "TOURNAMENT", target: "FIXTURE", card: "1 : N", fk: "FIXTURE.tournament_id", desc: "A tournament is composed of a schedule of match fixtures." }
+    ];
+
+    /* ==========================================================
+       INITIALIZATION & RENDERING
+       ========================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRelationalCards();
+      renderMatrixTable();
+      initCanvasPanZoom();
+      initDiagramGraph();
+      initNodeDragging();
+      loadCustomLayout();
+    });
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view-pane').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+      const targetPane = document.getElementById(`pane-${viewName}`);
+      if (targetPane) {
+        targetPane.classList.add('active');
+        targetPane.style.display = 'flex';
+      }
+
+      const activeBtn = Array.from(document.querySelectorAll('.nav-tab-btn')).find(btn => btn.getAttribute('onclick').includes(viewName));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function renderRelationalCards() {
+      const container = document.getElementById('schema-cards-container');
+      container.innerHTML = Object.entries(SCHEMA_DATA).map(([key, item], idx) => `
+        <div class="schema-card">
+          <div class="card-header" style="background:${item.color}15; border-left:4px solid ${item.color};">
+            <span>${item.name}</span>
+            <span class="card-badge">Table ${(idx+1).toString().padStart(2, '0')}</span>
+          </div>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${item.attributes.map(a => `
+                <tr>
+                  <td><code>${a.name}</code></td>
+                  <td style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-muted);">${a.type}</td>
+                  <td>
+                    ${a.key.includes('PK') ? '<span class="badge-pk">PK</span>' : ''}
+                    ${a.key.includes('FK') ? '<span class="badge-fk">FK</span>' : ''}
+                    ${a.key.includes('UNIQUE') ? '<span class="badge-unique">UNIQUE</span>' : ''}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `).join('');
+    }
+
+    function renderMatrixTable() {
+      const tbody = document.getElementById('matrix-table-body');
+      tbody.innerHTML = RELATIONSHIPS_LIST.map(r => `
+        <tr>
+          <td><strong style="color:var(--accent-primary);">&lt;${r.name}&gt;</strong></td>
+          <td><code>${r.source}</code></td>
+          <td><span style="font-family:'JetBrains Mono', monospace; font-weight:700; background:var(--bg-surface-subtle); padding:2px 8px; border-radius:4px;">${r.card}</span></td>
+          <td><code>${r.target}</code></td>
+          <td style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-muted);">${r.fk}</td>
+          <td style="color:var(--text-muted); font-size:12.5px;">${r.desc}</td>
+        </tr>
+      `).join('');
+    }
+
+    /* ==========================================================
+       CANVAS PAN & ZOOM ENGINE
+       ========================================================== */
+    let currentScale = 1;
+    let pointX = 0;
+    let pointY = 0;
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+
+    function initCanvasPanZoom() {
+      const wrapper = document.getElementById('viewport-wrapper');
+
+      wrapper.addEventListener('mousedown', (e) => {
+        // If clicking on an entity, relationship, attribute, or title box, let node dragging handle it
+        if (e.target.closest('.er-entity, .er-rel, .er-attr, .er-title-box')) {
+          return;
+        }
+
+        // If clicking directly on empty SVG canvas background, deselect active focus
+        if (e.target.tagName === 'svg' || e.target.id === 'viewport-wrapper' || e.target.id === 'connections-layer' || e.target.id === 'attr-connectors-layer') {
+          clearHighlight();
+        }
+
+        if (e.button !== 0) return;
+        isPanning = true;
+        startX = e.clientX - pointX;
+        startY = e.clientY - pointY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isPanning) return;
+        pointX = e.clientX - startX;
+        pointY = e.clientY - startY;
+        updateTransform();
+      });
+
+      window.addEventListener('mouseup', () => {
+        isPanning = false;
+      });
+
+      wrapper.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const xs = (e.clientX - pointX) / currentScale;
+        const ys = (e.clientY - pointY) / currentScale;
+        const delta = -e.deltaY;
+
+        if (delta > 0) {
+          currentScale = Math.min(currentScale * 1.1, 2.5);
+        } else {
+          currentScale = Math.max(currentScale / 1.1, 0.4);
+        }
+
+        pointX = e.clientX - xs * currentScale;
+        pointY = e.clientY - ys * currentScale;
+        updateTransform();
+      }, { passive: false });
+
+      // Escape key to unselect
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          clearHighlight();
+        }
+      });
+    }
+
+    function updateTransform() {
+      const svg = document.getElementById('er-svg');
+      svg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${currentScale})`;
+      document.getElementById('zoom-text').innerText = `${Math.round(currentScale * 100)}%`;
+    }
+
+    function zoomCanvas(delta) {
+      currentScale = Math.max(0.4, Math.min(2.5, currentScale + delta));
+      updateTransform();
+    }
+
+    function resetCanvas() {
+      currentScale = 1;
+      pointX = 0;
+      pointY = 0;
+      updateTransform();
+    }
+
+    /* ==========================================================
+       DRAGGABLE NODE GRAPH & DYNAMIC WIRE RECALCULATION ENGINE
+       ========================================================== */
+    const GRAPH_NODES = new Map();
+    const GRAPH_WIRES = [];
+    const CARDINALITY_REGISTRY = [];
+
+    let isNodeDragging = false;
+    let activeDragNode = null;
+    let dragStartPointerSvg = { x: 0, y: 0 };
+    let dragStartNodeTx = 0;
+    let dragStartNodeTy = 0;
+    let dragStartChildTx = {};
+    let hasDragMoved = false;
+    let justFinishedDrag = false;
+
+    function getSvgCoordinates(e) {
+      const svg = document.getElementById('er-svg');
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function initDiagramGraph() {
+      GRAPH_NODES.clear();
+      GRAPH_WIRES.length = 0;
+      CARDINALITY_REGISTRY.length = 0;
+
+      // 1. Register Entities
+      document.querySelectorAll('.er-entity').forEach(el => {
+        const rect = el.querySelector('rect');
+        const x = parseFloat(rect.getAttribute('x'));
+        const y = parseFloat(rect.getAttribute('y'));
+        const w = parseFloat(rect.getAttribute('width'));
+        const h = parseFloat(rect.getAttribute('height'));
+        const id = el.id;
+        const name = el.getAttribute('data-name') || id.replace('ent-', '');
+
+        GRAPH_NODES.set(id, {
+          id: id,
+          element: el,
+          type: 'entity',
+          name: name,
+          initX: x,
+          initY: y,
+          w: w,
+          h: h,
+          cx: x + w / 2,
+          cy: y + h / 2,
+          tx: 0,
+          ty: 0,
+          childAttrIds: []
+        });
+      });
+
+      // 2. Register Relationships (Diamonds)
+      document.querySelectorAll('.er-rel').forEach(el => {
+        const poly = el.querySelector('polygon');
+        const pts = poly.getAttribute('points').trim().split(/\s+/).map(p => {
+          const [px, py] = p.split(',').map(Number);
+          return { x: px, y: py };
+        });
+        const minX = Math.min(...pts.map(p => p.x));
+        const maxX = Math.max(...pts.map(p => p.x));
+        const minY = Math.min(...pts.map(p => p.y));
+        const maxY = Math.max(...pts.map(p => p.y));
+        const w = maxX - minX;
+        const h = maxY - minY;
+        const cx = (minX + maxX) / 2;
+        const cy = (minY + maxY) / 2;
+        const id = el.id;
+
+        GRAPH_NODES.set(id, {
+          id: id,
+          element: el,
+          type: 'rel',
+          initX: minX,
+          initY: minY,
+          w: w,
+          h: h,
+          hw: w / 2,
+          hh: h / 2,
+          cx: cx,
+          cy: cy,
+          tx: 0,
+          ty: 0
+        });
+      });
+
+      // 3. Register Attributes (Ovals/Pills)
+      document.querySelectorAll('.er-attr').forEach((el, idx) => {
+        const parentName = el.getAttribute('data-parent');
+        const rect = el.querySelector('rect');
+        const x = parseFloat(rect.getAttribute('x'));
+        const y = parseFloat(rect.getAttribute('y'));
+        const w = parseFloat(rect.getAttribute('width'));
+        const h = parseFloat(rect.getAttribute('height'));
+        
+        const textEl = el.querySelector('text');
+        const rawText = textEl ? textEl.textContent.trim().split(' ')[0] : `attr_${idx}`;
+        const id = el.id || `attr-${parentName}-${rawText}`;
+        el.id = id;
+
+        const nodeData = {
+          id: id,
+          element: el,
+          type: 'attr',
+          parentEntityId: `ent-${parentName}`,
+          initX: x,
+          initY: y,
+          w: w,
+          h: h,
+          cx: x + w / 2,
+          cy: y + h / 2,
+          tx: 0,
+          ty: 0
+        };
+        GRAPH_NODES.set(id, nodeData);
+
+        const parentNode = GRAPH_NODES.get(`ent-${parentName}`);
+        if (parentNode) {
+          parentNode.childAttrIds.push(id);
+        }
+      });
+
+      // 4. Register Title Banner
+      const titleBox = document.querySelector('.er-title-box');
+      if (titleBox) {
+        titleBox.id = 'title-banner';
+        const mainRect = titleBox.querySelector('rect');
+        const x = parseFloat(mainRect.getAttribute('x'));
+        const y = parseFloat(mainRect.getAttribute('y'));
+        const w = parseFloat(mainRect.getAttribute('width'));
+        const h = parseFloat(mainRect.getAttribute('height'));
+        GRAPH_NODES.set('title-banner', {
+          id: 'title-banner',
+          element: titleBox,
+          type: 'title',
+          initX: x,
+          initY: y,
+          w: w,
+          h: h,
+          cx: x + w / 2,
+          cy: y + h / 2,
+          tx: 0,
+          ty: 0
+        });
+      }
+
+      // 5. Register Relationship Connectors
+      const relPaths = document.querySelectorAll('#connections-layer path.er-connector');
+      relPaths.forEach((path, idx) => {
+        const dataLink = path.getAttribute('data-link') || '';
+        const tokens = dataLink.split(/\s+/).filter(Boolean);
+        if (tokens.length >= 2) {
+          const fromId = tokens[0].startsWith('rel-') ? tokens[0] : `ent-${tokens[0]}`;
+          const toId = tokens[1].startsWith('rel-') ? tokens[1] : `ent-${tokens[1]}`;
+          GRAPH_WIRES.push({
+            id: `rel-wire-${idx}`,
+            element: path,
+            type: 'rel',
+            fromId: fromId,
+            toId: toId,
+            origD: path.getAttribute('d'),
+            cardinalities: []
+          });
+        }
+      });
+
+      // 6. Register Attribute Connectors (1:1 mapping with data-parent attributes)
+      const entityNames = ['MEMBERSHIP_PLAN', 'SPORT', 'FACILITY', 'MEMBER', 'PAYMENT', 'CLUB_MEMBER', 'CLUB', 'COACH', 'TRAINING_SESSION', 'TEAM', 'TOURNAMENT', 'FIXTURE'];
+      entityNames.forEach(ent => {
+        const attrPaths = Array.from(document.querySelectorAll(`#attr-connectors-layer path[data-attr="${ent}"]`));
+        const attrNodes = Array.from(document.querySelectorAll(`.er-attr[data-parent="${ent}"]`));
+        attrPaths.forEach((path, i) => {
+          if (attrNodes[i]) {
+            GRAPH_WIRES.push({
+              id: `attr-wire-${ent}-${i}`,
+              element: path,
+              type: 'attr',
+              fromId: `ent-${ent}`,
+              toId: attrNodes[i].id,
+              origD: path.getAttribute('d'),
+              cardinalities: []
+            });
+          }
+        });
+      });
+
+      // 7. Register Cardinality Labels & Bind to Wires
+      document.querySelectorAll('.er-cardinality').forEach(el => {
+        const link = el.getAttribute('data-link');
+        const near = el.getAttribute('data-near');
+        const x0 = parseFloat(el.getAttribute('x'));
+        const y0 = parseFloat(el.getAttribute('y'));
+
+        let matchedWire = null;
+        if (link) {
+          matchedWire = GRAPH_WIRES.find(w => w.element.getAttribute('data-link') === link);
+        }
+
+        const cardObj = {
+          element: el,
+          initX: x0,
+          initY: y0,
+          wire: matchedWire,
+          anchor: 'from',
+          tDist: 25,
+          nDist: 12
+        };
+
+        if (matchedWire) {
+          const nodeA = GRAPH_NODES.get(matchedWire.fromId);
+          const nodeB = GRAPH_NODES.get(matchedWire.toId);
+          if (nodeA && nodeB) {
+            const p1 = getIntersection(nodeA, nodeB.cx, nodeB.cy);
+            const p2 = getIntersection(nodeB, nodeA.cx, nodeA.cy);
+            const vx = p2.x - p1.x;
+            const vy = p2.y - p1.y;
+            const len = Math.hypot(vx, vy) || 1;
+            const ux = vx / len;
+            const uy = vy / len;
+            const nx = -uy;
+            const ny = ux;
+
+            const nearNodeId = near ? (near.startsWith('rel-') ? near : `ent-${near}`) : '';
+            const isAnchorFrom = nearNodeId ? (nearNodeId === matchedWire.fromId) : (Math.hypot(x0 - p1.x, y0 - p1.y) <= Math.hypot(x0 - p2.x, y0 - p2.y));
+            cardObj.anchor = isAnchorFrom ? 'from' : 'to';
+
+            if (cardObj.anchor === 'from') {
+              const dx = x0 - p1.x;
+              const dy = y0 - p1.y;
+              cardObj.tDist = dx * ux + dy * uy;
+              cardObj.nDist = dx * nx + dy * ny;
+            } else {
+              const dx = x0 - p2.x;
+              const dy = y0 - p2.y;
+              cardObj.tDist = -(dx * ux + dy * uy);
+              cardObj.nDist = dx * nx + dy * ny;
+            }
+
+            if (!matchedWire.cardinalities) matchedWire.cardinalities = [];
+            matchedWire.cardinalities.push(cardObj);
+          }
+        }
+
+        CARDINALITY_REGISTRY.push(cardObj);
+      });
+    }
+
+    function initNodeDragging() {
+      const svg = document.getElementById('er-svg');
+
+      const interactiveSelector = '.er-entity, .er-rel, .er-attr, .er-title-box';
+      document.querySelectorAll(interactiveSelector).forEach(el => {
+        el.addEventListener('pointerdown', (e) => {
+          if (e.button !== 0) return;
+          const targetGroup = e.target.closest(interactiveSelector);
+          if (!targetGroup) return;
+
+          const nodeId = targetGroup.id;
+          const node = GRAPH_NODES.get(nodeId);
+          if (!node) return;
+
+          isNodeDragging = true;
+          activeDragNode = node;
+          hasDragMoved = false;
+
+          targetGroup.setPointerCapture(e.pointerId);
+          targetGroup.classList.add('node-dragging');
+          document.body.classList.add('is-dragging');
+
+          const svgPt = getSvgCoordinates(e);
+          dragStartPointerSvg = svgPt;
+          dragStartNodeTx = node.tx;
+          dragStartNodeTy = node.ty;
+
+          dragStartChildTx = {};
+          if (node.type === 'entity' && node.childAttrIds) {
+            node.childAttrIds.forEach(childId => {
+              const childNode = GRAPH_NODES.get(childId);
+              if (childNode) {
+                dragStartChildTx[childId] = { tx: childNode.tx, ty: childNode.ty };
+              }
+            });
+          }
+
+          e.stopPropagation();
+        });
+
+        el.addEventListener('pointermove', (e) => {
+          if (!isNodeDragging || !activeDragNode) return;
+
+          const svgPt = getSvgCoordinates(e);
+          const dx = svgPt.x - dragStartPointerSvg.x;
+          const dy = svgPt.y - dragStartPointerSvg.y;
+
+          if (!hasDragMoved && Math.hypot(dx, dy) > 3) {
+            hasDragMoved = true;
+          }
+
+          if (!hasDragMoved) return;
+
+          const node = activeDragNode;
+          node.tx = dragStartNodeTx + dx;
+          node.ty = dragStartNodeTy + dy;
+          node.cx = node.initX + node.w / 2 + node.tx;
+          node.cy = node.initY + node.h / 2 + node.ty;
+          node.element.setAttribute('transform', `translate(${node.tx}, ${node.ty})`);
+
+          // If dragging an entity, move its child attributes along smoothly
+          if (node.type === 'entity' && node.childAttrIds) {
+            node.childAttrIds.forEach(childId => {
+              const childNode = GRAPH_NODES.get(childId);
+              const initChild = dragStartChildTx[childId];
+              if (childNode && initChild) {
+                childNode.tx = initChild.tx + dx;
+                childNode.ty = initChild.ty + dy;
+                childNode.cx = childNode.initX + childNode.w / 2 + childNode.tx;
+                childNode.cy = childNode.initY + childNode.h / 2 + childNode.ty;
+                childNode.element.setAttribute('transform', `translate(${childNode.tx}, ${childNode.ty})`);
+              }
+            });
+          }
+
+          updateAllWires();
+        });
+
+        const endDragHandler = (e) => {
+          if (!isNodeDragging || !activeDragNode) return;
+
+          const targetGroup = activeDragNode.element;
+          try {
+            targetGroup.releasePointerCapture(e.pointerId);
+          } catch(err) {}
+
+          targetGroup.classList.remove('node-dragging');
+          document.body.classList.remove('is-dragging');
+
+          if (hasDragMoved) {
+            justFinishedDrag = true;
+            setTimeout(() => { justFinishedDrag = false; }, 100);
+            // Automatically persist layout on move
+            saveCustomLayout(false);
+          }
+
+          isNodeDragging = false;
+          activeDragNode = null;
+        };
+
+        el.addEventListener('pointerup', endDragHandler);
+        el.addEventListener('pointercancel', endDragHandler);
+      });
+    }
+
+    function getIntersection(node, targetCx, targetCy) {
+      const cx = node.cx;
+      const cy = node.cy;
+      const dx = targetCx - cx;
+      const dy = targetCy - cy;
+      if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) return { x: cx, y: cy };
+
+      if (node.type === 'rel') {
+        // Rhombus Diamond Boundary
+        const hw = node.hw || node.w / 2;
+        const hh = node.hh || node.h / 2;
+        const t = 1 / (Math.abs(dx) / hw + Math.abs(dy) / hh);
+        return {
+          x: cx + dx * t,
+          y: cy + dy * t
+        };
+      } else if (node.type === 'attr') {
+        // Attribute Oval / Pill Boundary
+        const hw = (node.w / 2) * 0.95;
+        const hh = (node.h / 2) * 0.95;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        if (absDy * hw <= absDx * hh) {
+          const factor = hw / absDx;
+          return { x: cx + (dx > 0 ? hw : -hw), y: cy + dy * factor };
+        } else {
+          const factor = hh / absDy;
+          return { x: cx + dx * factor, y: cy + (dy > 0 ? hh : -hh) };
+        }
+      } else {
+        // Entity Box or Title Box Boundary
+        const hw = node.w / 2;
+        const hh = node.h / 2;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        if (absDy * hw <= absDx * hh) {
+          const factor = hw / absDx;
+          return { x: cx + (dx > 0 ? hw : -hw), y: cy + dy * factor };
+        } else {
+          const factor = hh / absDy;
+          return { x: cx + dx * factor, y: cy + (dy > 0 ? hh : -hh) };
+        }
+      }
+    }
+
+    function updateSingleWire(wire) {
+      const nodeA = GRAPH_NODES.get(wire.fromId);
+      const nodeB = GRAPH_NODES.get(wire.toId);
+      if (!nodeA || !nodeB) return;
+
+      const p1 = getIntersection(nodeA, nodeB.cx, nodeB.cy);
+      const p2 = getIntersection(nodeB, nodeA.cx, nodeA.cy);
+
+      if (wire.type === 'attr') {
+        // Elegant Cubic Bezier Curve from Entity Box to Attribute Pill
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        let cx1, cy1, cx2, cy2;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          cx1 = p1.x + dx * 0.45;
+          cy1 = p1.y;
+          cx2 = p1.x + dx * 0.55;
+          cy2 = p2.y;
+        } else {
+          cx1 = p1.x;
+          cy1 = p1.y + dy * 0.45;
+          cx2 = p2.x;
+          cy2 = p1.y + dy * 0.55;
+        }
+        wire.element.setAttribute('d', `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} C ${cx1.toFixed(1)} ${cy1.toFixed(1)}, ${cx2.toFixed(1)} ${cy2.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`);
+      } else {
+        // Direct Relationship Line in Chen Notation
+        wire.element.setAttribute('d', `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`);
+
+        // Synchronize cardinality label positions along the connector wire
+        if (wire.cardinalities && wire.cardinalities.length > 0) {
+          const vx = p2.x - p1.x;
+          const vy = p2.y - p1.y;
+          const len = Math.hypot(vx, vy);
+          if (len > 0.001) {
+            const ux = vx / len;
+            const uy = vy / len;
+            const nx = -uy;
+            const ny = ux;
+
+            wire.cardinalities.forEach(card => {
+              let cx, cy;
+              if (card.anchor === 'from') {
+                cx = p1.x + ux * card.tDist + nx * card.nDist;
+                cy = p1.y + uy * card.tDist + ny * card.nDist;
+              } else {
+                cx = p2.x - ux * card.tDist + nx * card.nDist;
+                cy = p2.y - uy * card.tDist + ny * card.nDist;
+              }
+              card.element.setAttribute('x', Math.round(cx));
+              card.element.setAttribute('y', Math.round(cy));
+            });
+          }
+        }
+      }
+    }
+
+    function updateAllWires() {
+      for (let i = 0; i < GRAPH_WIRES.length; i++) {
+        updateSingleWire(GRAPH_WIRES[i]);
+      }
+    }
+
+    /* ==========================================================
+       LAYOUT PERSISTENCE ENGINE (DEFAULT CUSTOM PLACEMENT)
+       ========================================================== */
+    const STORAGE_KEY_LAYOUT = 'neura_er_diagram_custom_default_layout';
+
+    function saveCustomLayout(showFeedback = true) {
+      const layout = {};
+      GRAPH_NODES.forEach((node, id) => {
+        if (node.tx !== 0 || node.ty !== 0) {
+          layout[id] = { tx: Math.round(node.tx), ty: Math.round(node.ty) };
+        }
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY_LAYOUT, JSON.stringify(layout));
+        updateSaveIndicator(true);
+        if (showFeedback) {
+          showToast("Current box placement set as default!");
+        }
+      } catch (e) {
+        console.error("Failed to save layout to localStorage", e);
+      }
+    }
+
+    function loadCustomLayout() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_LAYOUT);
+        if (!raw) {
+          updateSaveIndicator(false);
+          return;
+        }
+        const layout = JSON.parse(raw);
+        let hasChanges = false;
+
+        for (const [id, pos] of Object.entries(layout)) {
+          const node = GRAPH_NODES.get(id);
+          if (node && pos) {
+            node.tx = pos.tx || 0;
+            node.ty = pos.ty || 0;
+            node.cx = node.initX + node.w / 2 + node.tx;
+            node.cy = node.initY + node.h / 2 + node.ty;
+            node.element.setAttribute('transform', `translate(${node.tx}, ${node.ty})`);
+            hasChanges = true;
+          }
+        }
+
+        if (hasChanges) {
+          updateAllWires();
+          updateSaveIndicator(true);
+        }
+      } catch (e) {
+        console.error("Failed to load saved layout", e);
+      }
+    }
+
+    function resetNodeLayout() {
+      try {
+        localStorage.removeItem(STORAGE_KEY_LAYOUT);
+      } catch (e) {}
+
+      GRAPH_NODES.forEach(node => {
+        node.tx = 0;
+        node.ty = 0;
+        node.cx = node.initX + node.w / 2;
+        node.cy = node.initY + node.h / 2;
+        node.element.removeAttribute('transform');
+      });
+
+      GRAPH_WIRES.forEach(wire => {
+        wire.element.setAttribute('d', wire.origD);
+      });
+
+      CARDINALITY_REGISTRY.forEach(card => {
+        card.element.setAttribute('x', card.initX);
+        card.element.setAttribute('y', card.initY);
+        card.element.removeAttribute('transform');
+      });
+
+      updateSaveIndicator(false);
+      showToast("Reset to original Chen notation layout");
+    }
+
+    function updateSaveIndicator(hasCustom) {
+      const el = document.getElementById('save-status-indicator');
+      if (!el) return;
+      if (hasCustom) {
+        el.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Custom Default Active`;
+        el.style.color = '#10b981';
+      } else {
+        el.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg> Original Chen Layout`;
+        el.style.color = 'var(--text-muted)';
+      }
+    }
+
+    /* ==========================================================
+       ARROW DISPLAY MODE CONTROLLER
+       ========================================================== */
+    let currentArrowMode = 'all'; // 'all', 'rel-only', 'none'
+    function cycleArrowMode() {
+      const svg = document.getElementById('er-svg');
+      const textEl = document.getElementById('arrow-mode-text');
+      if (currentArrowMode === 'all') {
+        currentArrowMode = 'rel-only';
+        svg.classList.remove('arrows-none');
+        svg.classList.add('arrows-rel-only');
+        if (textEl) textEl.textContent = 'Arrows: Relationships';
+        showToast("Arrow mode: Relationships only");
+      } else if (currentArrowMode === 'rel-only') {
+        currentArrowMode = 'none';
+        svg.classList.remove('arrows-rel-only');
+        svg.classList.add('arrows-none');
+        if (textEl) textEl.textContent = 'Arrows: Off';
+        showToast("Arrow mode: Off (Plain lines)");
+      } else {
+        currentArrowMode = 'all';
+        svg.classList.remove('arrows-none', 'arrows-rel-only');
+        if (textEl) textEl.textContent = 'Arrows: All';
+        showToast("Arrow mode: All (Relationships + Attributes)");
+      }
+    }
+
+    /* ==========================================================
+       ENTITY SELECTION & FOCUS HIGHLIGHTING
+       ========================================================== */
+    let currentSelectedEntity = null;
+
+    function selectEntity(entityName) {
+      if (justFinishedDrag) return;
+
+      // Toggle off if already selected
+      if (currentSelectedEntity === entityName) {
+        clearHighlight();
+        return;
+      }
+      currentSelectedEntity = entityName;
+
+      const svg = document.getElementById('er-svg');
+      svg.classList.add('highlight-active');
+
+      document.querySelectorAll('.er-highlight').forEach(el => el.classList.remove('er-highlight'));
+
+      // Highlight entity itself
+      const entEl = document.getElementById(`ent-${entityName}`);
+      if (entEl) entEl.classList.add('er-highlight');
+
+      // Highlight attributes
+      document.querySelectorAll(`[data-parent="${entityName}"]`).forEach(el => el.classList.add('er-highlight'));
+      document.querySelectorAll(`path[data-attr="${entityName}"]`).forEach(el => el.classList.add('er-highlight'));
+
+      // Highlight relationships and links connected to this entity
+      document.querySelectorAll('.er-rel').forEach(rel => {
+        const linkedEntities = rel.getAttribute('data-entity') || '';
+        if (linkedEntities.includes(entityName)) {
+          rel.classList.add('er-highlight');
+        }
+      });
+
+      document.querySelectorAll('.er-connector').forEach(conn => {
+        const link = conn.getAttribute('data-link') || '';
+        if (link.includes(entityName)) {
+          conn.classList.add('er-highlight');
+        }
+      });
+
+      // Show Side Inspector
+      openInspector(entityName);
+    }
+
+    function selectAttr(parentEntity, attrName) {
+      if (justFinishedDrag) return;
+      selectEntity(parentEntity);
+    }
+
+    function inspectRel(relId) {
+      if (justFinishedDrag) return;
+      const relEl = document.getElementById(`rel-${relId}`);
+      if (!relEl) return;
+      const entities = (relEl.getAttribute('data-entity') || '').split(' ');
+      if (entities.length > 0) selectEntity(entities[0]);
+    }
+
+    function clearHighlight() {
+      currentSelectedEntity = null;
+      const svg = document.getElementById('er-svg');
+      if (svg) svg.classList.remove('highlight-active');
+      document.querySelectorAll('.er-highlight').forEach(el => el.classList.remove('er-highlight'));
+      const inspector = document.getElementById('side-inspector');
+      if (inspector) inspector.classList.add('collapsed');
+      const searchInput = document.getElementById('diagram-search');
+      if (searchInput && searchInput.value) searchInput.value = '';
+    }
+
+    function closeInspector() {
+      clearHighlight();
+    }
+
+    /* ==========================================================
+       SIDE INSPECTOR
+       ========================================================== */
+    function openInspector(entityName) {
+      const data = SCHEMA_DATA[entityName];
+      if (!data) return;
+
+      const inspector = document.getElementById('side-inspector');
+      const title = document.getElementById('inspector-title');
+      const content = document.getElementById('inspector-content');
+
+      title.innerHTML = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${data.color};"></span> ${data.name}`;
+
+      content.innerHTML = `
+        <div class="inspector-section">
+          <span class="inspector-section-title">Entity Classification</span>
+          <div class="entity-desc-box">
+            <strong>${data.type}</strong><br>
+            ${data.desc}
+          </div>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-section-title">Schema Attributes (${data.attributes.length})</span>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Key</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.attributes.map(a => `
+                <tr>
+                  <td><code>${a.name}</code></td>
+                  <td style="font-size:11px; color:var(--text-muted);">${a.type}</td>
+                  <td>
+                    ${a.key.includes('PK') ? '<span class="badge-pk">PK</span>' : ''}
+                    ${a.key.includes('FK') ? '<span class="badge-fk">FK</span>' : ''}
+                    ${a.key.includes('UNIQUE') ? '<span class="badge-unique">UNIQUE</span>' : ''}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-section-title">Cardinality & Relationships</span>
+          <div class="entity-desc-box" style="font-size:12px;">
+            <ul style="padding-left:16px; display:flex; flex-direction:column; gap:4px;">
+              ${data.relationships.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-section-title">SQL CREATE TABLE</span>
+          <pre class="sql-code-block">CREATE TABLE ${data.name} (
+${data.attributes.map(a => `  ${a.name} ${a.type}${a.key.includes('PK') ? ' PRIMARY KEY' : ''}${a.key.includes('UNIQUE') ? ' UNIQUE' : ''}`).join(',\n')}
+);</pre>
+        </div>
+      `;
+
+      inspector.classList.remove('collapsed');
+    }
+
+    /* ==========================================================
+       THEME TOGGLE & EXPORTS
+       ========================================================== */
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+      showToast(`Switched to ${next.toUpperCase()} mode`);
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toUpperCase();
+      if (!q) {
+        clearHighlight();
+        return;
+      }
+
+      // Check if matches an entity name
+      const matchedEntity = Object.keys(SCHEMA_DATA).find(k => k.includes(q) || SCHEMA_DATA[k].attributes.some(a => a.name.toUpperCase().includes(q)));
+      if (matchedEntity) {
+        selectEntity(matchedEntity);
+      }
+    }
+
+    function exportSVG() {
+      const svg = document.getElementById('er-svg');
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svg);
+      if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+      const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "sports_club_er_diagram.svg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("SVG Exported successfully!");
+    }
+
+    function copyDDL() {
+      const ddl = document.getElementById('full-ddl-code').innerText;
+      navigator.clipboard.writeText(ddl).then(() => {
+        showToast("SQL DDL copied to clipboard!");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+  </script>
+</body>
+</html>

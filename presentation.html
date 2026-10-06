@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Club Membership & Tournament Management System — DBMS Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0c10;
+      --bg-secondary: #12161f;
+      --bg-card: #161b24;
+      --bg-table-header: #1c2331;
+      --bg-table-row: #141923;
+      --bg-table-row-alt: #181e2b;
+      --border-color: #273142;
+      --border-subtle: #1f2735;
+      --text-main: #f0f3f8;
+      --text-muted: #8b97a8;
+      --text-dim: #5c6878;
+      --badge-pk: #d4a373;
+      --badge-fk: #90be6d;
+      --badge-unique: #80ced6;
+      --accent: #e2e8f0;
+      --slide-width: 1920px;
+      --slide-height: 1080px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050608;
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    /* Presentation Viewport */
+    #presentation-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #050608;
+    }
+
+    .slide {
+      position: absolute;
+      width: min(96vw, calc(96vh * 16 / 9));
+      height: min(calc(96vw * 9 / 16), 96vh);
+      max-width: 1920px;
+      max-height: 1080px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: none;
+      flex-direction: column;
+      padding: 40px 52px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Slide Header */
+    .slide-header {
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 5px;
+      letter-spacing: 0.02em;
+    }
+
+    .slide-tag {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* SLIDE 1: Title Page */
+    .slide-title-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      padding: 0 40px;
+      background: radial-gradient(circle at center, #151b26 0%, #0a0c10 75%);
+    }
+
+    .title-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      letter-spacing: 0.15em;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      padding: 5px 16px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .main-title {
+      font-size: clamp(28px, 3.4vw, 50px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: 0.03em;
+      color: #ffffff;
+      max-width: 1050px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .title-divider {
+      width: 70px;
+      height: 2px;
+      background: var(--text-muted);
+      margin: 14px auto 20px;
+      opacity: 0.4;
+    }
+
+    .sub-title {
+      font-size: clamp(16px, 1.8vw, 22px);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    /* Academic Meta Grid */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 950px;
+      background: rgba(18, 22, 31, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: left;
+      border-left: 2px solid var(--border-color);
+      padding-left: 12px;
+    }
+
+    .meta-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    .meta-value {
+      font-size: 14px;
+      color: #f1f5f9;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* SLIDE 2: ER Diagram Viewer */
+    .er-viewer {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #0b0f17;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .er-viewer iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      border-radius: 7px;
+    }
+
+    /* SLIDES 7 & 8: Clean Center Middle Content */
+    .center-slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      width: 100%;
+      background: radial-gradient(circle at center, #151b26 0%, #0a0c10 75%);
+      border-radius: 8px;
+      padding: 0 40px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 3.8vw, 54px);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.25;
+    }
+
+    .section-subtitle {
+      font-size: clamp(16px, 1.8vw, 22px);
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Database Design Grid */
+    .schema-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-items: start;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .schema-grid-3::-webkit-scrollbar {
+      width: 4px;
+    }
+    .schema-grid-3::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    .schema-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .schema-card-header {
+      background: var(--bg-table-header);
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .schema-card-header .table-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .db-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .db-table th {
+      background: #11151e;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 6.5px 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .db-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .db-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .db-table tr:nth-child(even) {
+      background: var(--bg-table-row);
+    }
+
+    .db-table tr:nth-child(odd) {
+      background: var(--bg-table-row-alt);
+    }
+
+    .field-col {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: #e6edf3;
+      width: 44%;
+      white-space: nowrap;
+    }
+
+    .type-col {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #a0aec0;
+      width: 34%;
+      white-space: nowrap;
+    }
+
+    .key-col {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      width: 22%;
+      white-space: nowrap;
+    }
+
+    .key-badge {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .key-pk {
+      color: #e2b17a;
+      background: rgba(212, 163, 115, 0.12);
+      border: 1px solid rgba(212, 163, 115, 0.3);
+    }
+
+    .key-fk {
+      color: #a8d58a;
+      background: rgba(144, 190, 109, 0.12);
+      border: 1px solid rgba(144, 190, 109, 0.3);
+    }
+
+    .key-pk-fk {
+      color: #ffd166;
+      background: rgba(255, 209, 102, 0.14);
+      border: 1px solid rgba(255, 209, 102, 0.35);
+    }
+
+    .key-unique {
+      color: #93d5ed;
+      background: rgba(128, 206, 214, 0.12);
+      border: 1px solid rgba(128, 206, 214, 0.3);
+    }
+
+    .fk-ref {
+      font-size: 9.5px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .card-badge-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Slide 7: Populated Data Grid */
+    .rdbms-data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .rdbms-data-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rdbms-data-header {
+      background: var(--bg-table-header);
+      padding: 8px 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rdbms-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .rdbms-data-table th {
+      background: #11151e;
+      color: var(--text-muted);
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+      font-size: 10px;
+    }
+
+    .rdbms-data-table td {
+      padding: 5.5px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      white-space: nowrap;
+    }
+
+    .rdbms-data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Slide 8: Query Execution Container */
+    .query-exec-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .query-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .query-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .query-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #93c5fd;
+    }
+
+    .query-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: rgba(37,99,235,0.15);
+      color: #60a5fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .sql-code {
+      background: #090d14;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #38bdf8;
+      line-height: 1.45;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Controls Bar */
+    #controls-bar {
+      position: fixed;
+      bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(18, 22, 31, 0.88);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: 30px;
+      z-index: 100;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .control-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .control-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border-color);
+    }
+
+    .slide-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-main);
+      min-width: 60px;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 99;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 12.5%;
+      background: var(--text-muted);
+      transition: width 0.25s ease;
+    }
+
+    /* Print / PDF Styling */
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+        overflow: visible;
+        height: auto;
+      }
+
+      #controls-bar, .progress-bar-container, .resize-toolbar {
+        display: none !important;
+      }
+
+      #presentation-container {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .slide {
+        display: flex !important;
+        opacity: 1 !important;
+        position: relative !important;
+        width: 100% !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        page-break-after: always;
+        break-after: page;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        background: #0d1117 !important;
+        color: #ffffff !important;
+        border-radius: 0 !important;
+        margin-bottom: 0;
+      }
+
+      .slide-title-page, .center-slide-content {
+        background: #0d1117 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="presentation-container">
+
+    <!-- ==================== SLIDE 1: TITLE PAGE ==================== -->
+    <div class="slide active" id="slide-1" data-slide="1">
+      <div class="slide-title-page">
+        <div class="title-badge">DBMS PROJECT PRESENTATION</div>
+        <h1 class="main-title">SPORTS CLUB MEMBERSHIP AND TOURNAMENT MANAGEMENT SYSTEM</h1>
+        <div class="title-divider"></div>
+        <h2 class="sub-title">Database Management System Project</h2>
+
+        <!-- Student & Project Information -->
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Student Name</span>
+            <span class="meta-value">Sheikh Arsh Ali</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Roll Number</span>
+            <span class="meta-value">25WU0102255</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Subject</span>
+            <span class="meta-value">DBMS</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Faculty Name</span>
+            <span class="meta-value">Dr. Kiran Mayee</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 2: ER DIAGRAM ==================== -->
+    <div class="slide" id="slide-2" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">CONCEPTUAL DESIGN: ENTITY RELATIONSHIP DIAGRAM</h2>
+          <div class="slide-subtitle">Interactive conceptual architecture — 12 Entities, 10 Relationships, 69 Attributes, live drag &amp; drop.</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <a href="er_diagram.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(37,99,235,0.18); border: 1px solid rgba(59,130,246,0.45); color: #93c5fd; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.2s ease;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Open in Full Screen / Studio
+          </a>
+        </div>
+      </div>
+      <div class="er-viewer">
+        <iframe id="er-diagram-frame" src="er_diagram.html?embed=true" title="Interactive ER Diagram Studio" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 3: RELATIONAL DATABASE DESIGN (1/4) ==================== -->
+    <div class="slide" id="slide-3" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">RELATIONAL DATABASE DESIGN</h2>
+          <div class="slide-subtitle">Schema definitions, constraints, foreign keys, and 3NF normalization</div>
+        </div>
+        <span class="slide-tag">01 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- MEMBERSHIP_PLAN -->
+        <div class="schema-card" style="border-top: 3px solid #f43f5e;">
+          <div class="schema-card-header">
+            <span>MEMBERSHIP_PLAN</span>
+            <span class="card-badge-pill">Table 01 • Plan Tier</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">plan_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">plan_name</td>
+                <td class="type-col">VARCHAR(50)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">duration_months</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">fee_amount</td>
+                <td class="type-col">NUMERIC(10,2)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MEMBER -->
+        <div class="schema-card" style="border-top: 3px solid #3b82f6;">
+          <div class="schema-card-header">
+            <span>MEMBER</span>
+            <span class="card-badge-pill">Table 02 • Core User</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">member_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">gender</td>
+                <td class="type-col">VARCHAR(10)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">phone</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">email</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"><span class="key-badge key-unique">UNIQUE</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">password</td>
+                <td class="type-col">VARCHAR(255)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">address</td>
+                <td class="type-col">VARCHAR(255)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">join_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SPORT -->
+        <div class="schema-card" style="border-top: 3px solid #10b981;">
+          <div class="schema-card-header">
+            <span>SPORT</span>
+            <span class="card-badge-pill">Table 03 • Discipline</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">sport_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">sport_name</td>
+                <td class="type-col">VARCHAR(50)</td>
+                <td class="key-col"><span class="key-badge key-unique">UNIQUE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 4: RELATIONAL DATABASE DESIGN (2/4) ==================== -->
+    <div class="slide" id="slide-4" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">RELATIONAL DATABASE DESIGN</h2>
+          <div class="slide-subtitle">Schema definitions, constraints, foreign keys, and 3NF normalization</div>
+        </div>
+        <span class="slide-tag">02 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- FACILITY -->
+        <div class="schema-card" style="border-top: 3px solid #0ea5e9;">
+          <div class="schema-card-header">
+            <span>FACILITY</span>
+            <span class="card-badge-pill">Table 04 • Venue</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">facility_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">type</td>
+                <td class="type-col">VARCHAR(50)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">location</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">capacity</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- COACH -->
+        <div class="schema-card" style="border-top: 3px solid #84cc16;">
+          <div class="schema-card-header">
+            <span>COACH</span>
+            <span class="card-badge-pill">Table 05 • Instructor</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">coach_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">phone</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">email</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"><span class="key-badge key-unique">UNIQUE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CLUB -->
+        <div class="schema-card" style="border-top: 3px solid #ef4444;">
+          <div class="schema-card-header">
+            <span>CLUB</span>
+            <span class="card-badge-pill">Table 06 • Team</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">club_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">club_name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">sport_id<span class="fk-ref">→ SPORT</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">coach_id<span class="fk-ref">→ COACH</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">created_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 5: RELATIONAL DATABASE DESIGN (3/4) ==================== -->
+    <div class="slide" id="slide-5" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">RELATIONAL DATABASE DESIGN</h2>
+          <div class="slide-subtitle">Schema definitions, constraints, foreign keys, and 3NF normalization</div>
+        </div>
+        <span class="slide-tag">03 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- CLUB_MEMBER -->
+        <div class="schema-card" style="border-top: 3px solid #22c55e;">
+          <div class="schema-card-header">
+            <span>CLUB_MEMBER</span>
+            <span class="card-badge-pill">Table 07 • Bridge (N:N)</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">member_id<span class="fk-ref">→ MEMBER</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk-fk">PK, FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">club_id<span class="fk-ref">→ CLUB</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk-fk">PK, FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">role</td>
+                <td class="type-col">VARCHAR(50)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">join_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="schema-card" style="border-top: 3px solid #fb7185;">
+          <div class="schema-card-header">
+            <span>PAYMENT</span>
+            <span class="card-badge-pill">Table 08 • Ledger</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">payment_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">member_id<span class="fk-ref">→ MEMBER</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">plan_id<span class="fk-ref">→ MEMBERSHIP_PLAN</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">amount</td>
+                <td class="type-col">NUMERIC(10,2)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">payment_mode</td>
+                <td class="type-col">VARCHAR(30)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">payment_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">transaction_ref</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"><span class="key-badge key-unique">UNIQUE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TRAINING_SESSION -->
+        <div class="schema-card" style="border-top: 3px solid #14b8a6;">
+          <div class="schema-card-header">
+            <span>TRAINING_SESSION</span>
+            <span class="card-badge-pill">Table 09 • Clinic</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">session_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">sport_id<span class="fk-ref">→ SPORT</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">coach_id<span class="fk-ref">→ COACH</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">venue_id<span class="fk-ref">→ FACILITY</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">session_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">start_time</td>
+                <td class="type-col">TIME</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">end_time</td>
+                <td class="type-col">TIME</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">capacity</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 6: RELATIONAL DATABASE DESIGN (4/4) ==================== -->
+    <div class="slide" id="slide-6" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">RELATIONAL DATABASE DESIGN</h2>
+          <div class="slide-subtitle">Schema definitions, constraints, foreign keys, and 3NF normalization</div>
+        </div>
+        <span class="slide-tag">04 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- TEAM -->
+        <div class="schema-card" style="border-top: 3px solid #f59e0b;">
+          <div class="schema-card-header">
+            <span>TEAM</span>
+            <span class="card-badge-pill">Table 10 • Squad</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">team_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">club_id<span class="fk-ref">→ CLUB</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">team_name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">sport_id<span class="fk-ref">→ SPORT</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">coach_id<span class="fk-ref">→ COACH</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">created_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TOURNAMENT -->
+        <div class="schema-card" style="border-top: 3px solid #a855f7;">
+          <div class="schema-card-header">
+            <span>TOURNAMENT</span>
+            <span class="card-badge-pill">Table 11 • Event</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">tournament_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">name</td>
+                <td class="type-col">VARCHAR(100)</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">sport_id<span class="fk-ref">→ SPORT</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">start_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">end_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">type</td>
+                <td class="type-col">VARCHAR(50)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FIXTURE -->
+        <div class="schema-card" style="border-top: 3px solid #d97706;">
+          <div class="schema-card-header">
+            <span>FIXTURE</span>
+            <span class="card-badge-pill">Table 12 • Match</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Data Type</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="field-col">fixture_id</td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-pk">PK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">tournament_id<span class="fk-ref">→ TOURNAMENT</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">team1_id<span class="fk-ref">→ TEAM</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">team2_id<span class="fk-ref">→ TEAM</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">fixture_date</td>
+                <td class="type-col">DATE</td>
+                <td class="key-col"></td>
+              </tr>
+              <tr>
+                <td class="field-col">venue_id<span class="fk-ref">→ FACILITY</span></td>
+                <td class="type-col">INTEGER</td>
+                <td class="key-col"><span class="key-badge key-fk">FK</span></td>
+              </tr>
+              <tr>
+                <td class="field-col">status</td>
+                <td class="type-col">VARCHAR(20)</td>
+                <td class="key-col"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 7: FILLED-IN RDBMS SECTION DIVIDER ==================== -->
+    <div class="slide" id="slide-7" data-slide="7">
+      <div class="center-slide-content">
+        <h1 class="section-title">FILLED-IN RDBMS</h1>
+        <div class="section-subtitle" style="margin-top: 14px; font-size: 16px;">Live PostgreSQL Instances &bull; 12 Populated Relational Tables &bull; Atomic Records</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 8: FILLED-IN RDBMS DATA (1/4) ==================== -->
+    <div class="slide" id="slide-8" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">FILLED-IN RDBMS DATA INSTANCES</h2>
+          <div class="slide-subtitle">Populated PostgreSQL tables &bull; Configuration, Sports Master &amp; Infrastructure Venues</div>
+        </div>
+        <span class="slide-tag">01 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- MEMBERSHIP_PLAN DATA -->
+        <div class="schema-card" style="border-top: 3px solid #f43f5e;">
+          <div class="schema-card-header">
+            <span>MEMBERSHIP_PLAN</span>
+            <span class="card-badge-pill">5 Tiers Populated</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>plan_id</th><th>plan_name</th><th>duration</th><th>fee_amount</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#f43f5e;">101</td><td style="color:#fff;">Standard Monthly Pass</td><td class="type-col">1 Month</td><td style="font-weight:600; color:#4ade80;">₹499.90</td></tr><tr><td class="field-col" style="color:#f43f5e;">102</td><td style="color:#fff;">Quarterly Fitness Pass</td><td class="type-col">3 Months</td><td style="font-weight:600; color:#4ade80;">₹1399.90</td></tr><tr><td class="field-col" style="color:#f43f5e;">103</td><td style="color:#fff;">Annual Gold Elite Pass</td><td class="type-col">12 Months</td><td style="font-weight:600; color:#4ade80;">₹4999.90</td></tr><tr><td class="field-col" style="color:#f43f5e;">104</td><td style="color:#fff;">Student Semester Pass</td><td class="type-col">6 Months</td><td style="font-weight:600; color:#4ade80;">₹1999.90</td></tr><tr><td class="field-col" style="color:#f43f5e;">105</td><td style="color:#fff;">Weekend Warrior Pass</td><td class="type-col">1 Month</td><td style="font-weight:600; color:#4ade80;">₹299.90</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SPORT DATA -->
+        <div class="schema-card" style="border-top: 3px solid #10b981;">
+          <div class="schema-card-header">
+            <span>SPORT</span>
+            <span class="card-badge-pill">6 Disciplines Populated</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>sport_id</th><th>sport_name</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#10b981;">201</td><td style="font-weight:600; color:#fff;">Football</td></tr><tr><td class="field-col" style="color:#10b981;">202</td><td style="font-weight:600; color:#fff;">Cricket</td></tr><tr><td class="field-col" style="color:#10b981;">203</td><td style="font-weight:600; color:#fff;">Badminton</td></tr><tr><td class="field-col" style="color:#10b981;">204</td><td style="font-weight:600; color:#fff;">Basketball</td></tr><tr><td class="field-col" style="color:#10b981;">205</td><td style="font-weight:600; color:#fff;">Tennis</td></tr><tr><td class="field-col" style="color:#10b981;">206</td><td style="font-weight:600; color:#fff;">Swimming</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FACILITY DATA -->
+        <div class="schema-card" style="border-top: 3px solid #0ea5e9;">
+          <div class="schema-card-header">
+            <span>FACILITY</span>
+            <span class="card-badge-pill">6 Arenas Populated</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>name</th><th>type</th><th>capacity</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#0ea5e9;">301</td><td style="font-size:11px; color:#fff;">Main Arena Stadium Turf</td><td class="type-col" style="font-size:10px;">Outdoor Football Pitch</td><td style="color:#e2e8f0;">1500</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Available</span></td></tr><tr><td class="field-col" style="color:#0ea5e9;">302</td><td style="font-size:11px; color:#fff;">Imperial Cricket Oval</td><td class="type-col" style="font-size:10px;">Outdoor Cricket Ground</td><td style="color:#e2e8f0;">2500</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Booked</span></td></tr><tr><td class="field-col" style="color:#0ea5e9;">303</td><td style="font-size:11px; color:#fff;">Grand Slam Center Court</td><td class="type-col" style="font-size:10px;">Clay & Synthetic Court</td><td style="color:#e2e8f0;">350</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Booked</span></td></tr><tr><td class="field-col" style="color:#0ea5e9;">304</td><td style="font-size:11px; color:#fff;">Smash Point Badminton Arena</td><td class="type-col" style="font-size:10px;">Indoor Wooden Court</td><td style="color:#e2e8f0;">120</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Available</span></td></tr><tr><td class="field-col" style="color:#0ea5e9;">305</td><td style="font-size:11px; color:#fff;">Skyline Basketball Dome</td><td class="type-col" style="font-size:10px;">Indoor Hardwood Court</td><td style="color:#e2e8f0;">400</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Booked</span></td></tr><tr><td class="field-col" style="color:#0ea5e9;">306</td><td style="font-size:11px; color:#fff;">Olympic Aquatic Center</td><td class="type-col" style="font-size:10px;">Olympic Pool (50m)</td><td style="color:#e2e8f0;">250</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Under Maintenance</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 9: FILLED-IN RDBMS DATA (2/4) ==================== -->
+    <div class="slide" id="slide-9" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">FILLED-IN RDBMS DATA INSTANCES</h2>
+          <div class="slide-subtitle">Populated PostgreSQL tables &bull; Instructors, Club Franchises &amp; Competitive Squads</div>
+        </div>
+        <span class="slide-tag">02 / 04</span>
+      </div>
+      <div class="schema-grid-3">
+
+        <!-- COACH DATA -->
+        <div class="schema-card" style="border-top: 3px solid #84cc16;">
+          <div class="schema-card-header">
+            <span>COACH</span>
+            <span class="card-badge-pill">6 Instructors</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>name</th><th>phone</th><th>email</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#84cc16;">401</td><td style="color:#fff; font-weight:600;">Carlos Mendez</td><td class="type-col" style="font-size:10px;">+91-9820154321</td><td style="font-size:10px; color:#93c5fd;">carlos.mendez@gmail.com</td></tr><tr><td class="field-col" style="color:#84cc16;">402</td><td style="color:#fff; font-weight:600;">Vikram Singhania</td><td class="type-col" style="font-size:10px;">+91-9811234567</td><td style="font-size:10px; color:#93c5fd;">vikram.singh@gmail.com</td></tr><tr><td class="field-col" style="color:#84cc16;">403</td><td style="color:#fff; font-weight:600;">Elena Rostova</td><td class="type-col" style="font-size:10px;">+91-9717890123</td><td style="font-size:10px; color:#93c5fd;">elena.rostova@gmail.com</td></tr><tr><td class="field-col" style="color:#84cc16;">404</td><td style="color:#fff; font-weight:600;">Lee Wei Chen</td><td class="type-col" style="font-size:10px;">+91-9876543210</td><td style="font-size:10px; color:#93c5fd;">lee.wei@gmail.com</td></tr><tr><td class="field-col" style="color:#84cc16;">405</td><td style="color:#fff; font-weight:600;">Marcus Aurelius Hayes</td><td class="type-col" style="font-size:10px;">+91-9945012345</td><td style="font-size:10px; color:#93c5fd;">marcus.hayes@gmail.com</td></tr><tr><td class="field-col" style="color:#84cc16;">406</td><td style="color:#fff; font-weight:600;">Sarah Jenkins</td><td class="type-col" style="font-size:10px;">+91-9848098765</td><td style="font-size:10px; color:#93c5fd;">sarah.jenkins@gmail.com</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CLUB DATA -->
+        <div class="schema-card" style="border-top: 3px solid #ef4444;">
+          <div class="schema-card-header">
+            <span>CLUB</span>
+            <span class="card-badge-pill">6 Clubs</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>club_name</th><th>sport</th><th>coach</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#ef4444;">501</td><td style="color:#fff; font-weight:600;">Thunderbolts FC</td><td class="type-col" style="font-size:10px;">201 (Football)</td><td class="type-col" style="font-size:10px;">401 (C. Mendez)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#ef4444;">502</td><td style="color:#fff; font-weight:600;">Apex Strikers CC</td><td class="type-col" style="font-size:10px;">202 (Cricket)</td><td class="type-col" style="font-size:10px;">402 (V. Singhania)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#ef4444;">503</td><td style="color:#fff; font-weight:600;">Ace Masters TC</td><td class="type-col" style="font-size:10px;">205 (Tennis)</td><td class="type-col" style="font-size:10px;">403 (E. Rostova)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#ef4444;">504</td><td style="color:#fff; font-weight:600;">Smash Point BC</td><td class="type-col" style="font-size:10px;">203 (Badminton)</td><td class="type-col" style="font-size:10px;">404 (L. W. Chen)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#ef4444;">505</td><td style="color:#fff; font-weight:600;">Royal Hoops BC</td><td class="type-col" style="font-size:10px;">204 (Basketball)</td><td class="type-col" style="font-size:10px;">405 (M. A. Hayes)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#ef4444;">506</td><td style="color:#fff; font-weight:600;">Aqua Dolphins SC</td><td class="type-col" style="font-size:10px;">206 (Swimming)</td><td class="type-col" style="font-size:10px;">406 (S. Jenkins)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEAM DATA -->
+        <div class="schema-card" style="border-top: 3px solid #f59e0b;">
+          <div class="schema-card-header">
+            <span>TEAM (SQUADS)</span>
+            <span class="card-badge-pill">8 Squads</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>team_name</th><th>club</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#f59e0b;">701</td><td style="color:#fff; font-weight:600; font-size:11px;">Thunderbolts Senior A</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">702</td><td style="color:#fff; font-weight:600; font-size:11px;">Thunderbolts Under-21</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">703</td><td style="color:#fff; font-weight:600; font-size:11px;">Apex Strikers XI</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">704</td><td style="color:#fff; font-weight:600; font-size:11px;">Apex Colts XI</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">705</td><td style="color:#fff; font-weight:600; font-size:11px;">Ace Masters Pro Squad</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">706</td><td style="color:#fff; font-weight:600; font-size:11px;">Smash Point Shuttlers</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">707</td><td style="color:#fff; font-weight:600; font-size:11px;">Royal Hoops Varsity</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#f59e0b;">708</td><td style="color:#fff; font-weight:600; font-size:11px;">Royal Hoops Ballers</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 10: FILLED-IN RDBMS DATA (3/4) ==================== -->
+    <div class="slide" id="slide-10" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">FILLED-IN RDBMS DATA INSTANCES</h2>
+          <div class="slide-subtitle">Populated PostgreSQL tables &bull; Registered Member Athletes (27 Members) &amp; 1NF Atomic Roles</div>
+        </div>
+        <span class="slide-tag">03 / 04</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; flex: 1; overflow-y: auto; padding-right: 4px;">
+
+        <!-- MEMBER DATA -->
+        <div class="schema-card" style="border-top: 3px solid #3b82f6;">
+          <div class="schema-card-header">
+            <span>MEMBER</span>
+            <span class="card-badge-pill">27 Registered Athletes (@gmail.com)</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>name</th><th>gender</th><th>phone</th><th>email</th><th>address</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#3b82f6;">1001</td><td style="color:#fff; font-weight:600;">Aarav Sharma</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9820011223</td><td style="font-size:10px; color:#93c5fd;">aarav.sharma@gmail.com</td><td class="type-col" style="font-size:10px;">Sector 14, Mumbai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1002</td><td style="color:#fff; font-weight:600;">Sophia Martinez</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9819922334</td><td style="font-size:10px; color:#93c5fd;">sophia.martinez@gmail.com</td><td class="type-col" style="font-size:10px;">Bandra West, Mumbai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1003</td><td style="color:#fff; font-weight:600;">Daniel Kim</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9769933445</td><td style="font-size:10px; color:#93c5fd;">daniel.kim@gmail.com</td><td class="type-col" style="font-size:10px;">Koramangala, Bengaluru</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1004</td><td style="color:#fff; font-weight:600;">Fatima Al-Mansoor</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9920044556</td><td style="font-size:10px; color:#93c5fd;">fatima.mansoor@gmail.com</td><td class="type-col" style="font-size:10px;">Marine Lines, Mumbai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1005</td><td style="color:#fff; font-weight:600;">Lucas Silva</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9833055667</td><td style="font-size:10px; color:#93c5fd;">lucas.silva@gmail.com</td><td class="type-col" style="font-size:10px;">Indiranagar, Bengaluru</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1006</td><td style="color:#fff; font-weight:600;">Priya Nair</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9870066778</td><td style="font-size:10px; color:#93c5fd;">priya.nair@gmail.com</td><td class="type-col" style="font-size:10px;">Silver Oak, Kochi</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Pending</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1007</td><td style="color:#fff; font-weight:600;">Liam O'Connor</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9821077889</td><td style="font-size:10px; color:#93c5fd;">liam.oconnor@gmail.com</td><td class="type-col" style="font-size:10px;">Jubilee Hills, Hyderabad</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1008</td><td style="color:#fff; font-weight:600;">Chloe Dubois</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9987088990</td><td style="font-size:10px; color:#93c5fd;">chloe.dubois@gmail.com</td><td class="type-col" style="font-size:10px;">Whitefield, Bengaluru</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1009</td><td style="color:#fff; font-weight:600;">Rohan Gupta</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9810099001</td><td style="font-size:10px; color:#93c5fd;">rohan.gupta@gmail.com</td><td class="type-col" style="font-size:10px;">HITEC City, Hyderabad</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1010</td><td style="color:#fff; font-weight:600;">Aisha Hassan</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9871100112</td><td style="font-size:10px; color:#93c5fd;">aisha.hassan@gmail.com</td><td class="type-col" style="font-size:10px;">DLF Phase 5, Gurugram</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1011</td><td style="color:#fff; font-weight:600;">Mateo Rossi</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9818811223</td><td style="font-size:10px; color:#93c5fd;">mateo.rossi@gmail.com</td><td class="type-col" style="font-size:10px;">Vasant Vihar, New Delhi</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Suspended</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1012</td><td style="color:#fff; font-weight:600;">Ananya Patel</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9822222334</td><td style="font-size:10px; color:#93c5fd;">ananya.patel@gmail.com</td><td class="type-col" style="font-size:10px;">SG Highway, Ahmedabad</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1013</td><td style="color:#fff; font-weight:600;">Jordan Taylor</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9930033445</td><td style="font-size:10px; color:#93c5fd;">jordan.taylor@gmail.com</td><td class="type-col" style="font-size:10px;">Anna Nagar, Chennai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1014</td><td style="color:#fff; font-weight:600;">Ethan Wright</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9845044556</td><td style="font-size:10px; color:#93c5fd;">ethan.wright@gmail.com</td><td class="type-col" style="font-size:10px;">HSR Layout, Bengaluru</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1015</td><td style="color:#fff; font-weight:600;">Maya Tanaka</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9886055667</td><td style="font-size:10px; color:#93c5fd;">maya.tanaka@gmail.com</td><td class="type-col" style="font-size:10px;">Pune Camp, Pune</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1016</td><td style="color:#fff; font-weight:600;">Noah Van Der Berg</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9741066778</td><td style="font-size:10px; color:#93c5fd;">noah.vanderberg@gmail.com</td><td class="type-col" style="font-size:10px;">Salt Lake, Kolkata</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1017</td><td style="color:#fff; font-weight:600;">Isabella Rossi</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9900077889</td><td style="font-size:10px; color:#93c5fd;">isabella.rossi@gmail.com</td><td class="type-col" style="font-size:10px;">Banjara Hills, Hyderabad</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1018</td><td style="color:#fff; font-weight:600;">Kabir Mehta</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9844088990</td><td style="font-size:10px; color:#93c5fd;">kabir.mehta@gmail.com</td><td class="type-col" style="font-size:10px;">Gomti Nagar, Lucknow</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Pending</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1019</td><td style="color:#fff; font-weight:600;">Samantha Green</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9840099001</td><td style="font-size:10px; color:#93c5fd;">samantha.green@gmail.com</td><td class="type-col" style="font-size:10px;">Alwarpet, Chennai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1020</td><td style="color:#fff; font-weight:600;">Diego Fernandez</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9884000112</td><td style="font-size:10px; color:#93c5fd;">diego.fernandez@gmail.com</td><td class="type-col" style="font-size:10px;">Miramar, Panaji, Goa</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1021</td><td style="color:#fff; font-weight:600;">Nina Kowalska</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9790011223</td><td style="font-size:10px; color:#93c5fd;">nina.kowalska@gmail.com</td><td class="type-col" style="font-size:10px;">Adyar, Chennai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1022</td><td style="color:#fff; font-weight:600;">Tariq Aziz</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9849022334</td><td style="font-size:10px; color:#93c5fd;">tariq.aziz@gmail.com</td><td class="type-col" style="font-size:10px;">Gachibowli, Hyderabad</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1023</td><td style="color:#fff; font-weight:600;">Emily Chen</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9885033445</td><td style="font-size:10px; color:#93c5fd;">emily.chen@gmail.com</td><td class="type-col" style="font-size:10px;">Park Street, Kolkata</td><td><span class="key-badge">Inactive</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1024</td><td style="color:#fff; font-weight:600;">Alexander Novak</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9949044556</td><td style="font-size:10px; color:#93c5fd;">alex.novak@gmail.com</td><td class="type-col" style="font-size:10px;">Powai, Mumbai</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1025</td><td style="color:#fff; font-weight:600;">Olivia Brown</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9830055667</td><td style="font-size:10px; color:#93c5fd;">olivia.brown@gmail.com</td><td class="type-col" style="font-size:10px;">Ballygunge, Kolkata</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1026</td><td style="color:#fff; font-weight:600;">Zachary Miller</td><td class="type-col" style="font-size:10px;">Male</td><td class="type-col" style="font-size:10px;">+91-9831066778</td><td style="font-size:10px; color:#93c5fd;">zach.miller@gmail.com</td><td class="type-col" style="font-size:10px;">Calangute, Goa</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td></tr><tr><td class="field-col" style="color:#3b82f6;">1027</td><td style="color:#fff; font-weight:600;">Zara Khan</td><td class="type-col" style="font-size:10px;">Female</td><td class="type-col" style="font-size:10px;">+91-9874077889</td><td style="font-size:10px; color:#93c5fd;">zara.khan@gmail.com</td><td class="type-col" style="font-size:10px;">New Town, Kolkata</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CLUB_MEMBER DATA -->
+        <div class="schema-card" style="border-top: 3px solid #22c55e;">
+          <div class="schema-card-header">
+            <span>CLUB_MEMBER (1NF Atomic Roles)</span>
+            <span class="card-badge-pill">34 Assignments</span>
+          </div>
+          <div style="max-height: 520px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>member_id</th><th>club_id</th><th>role</th><th>join_date</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#22c55e;">1002</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-01-16</td></tr><tr><td class="field-col" style="color:#22c55e;">1002</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Striker</td><td class="type-col" style="font-size:10px;">2024-01-16</td></tr><tr><td class="field-col" style="color:#22c55e;">1005</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Vice-Captain</td><td class="type-col" style="font-size:10px;">2024-02-12</td></tr><tr><td class="field-col" style="color:#22c55e;">1005</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Midfielder</td><td class="type-col" style="font-size:10px;">2024-02-12</td></tr><tr><td class="field-col" style="color:#22c55e;">1011</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Defender</td><td class="type-col" style="font-size:10px;">2024-04-13</td></tr><tr><td class="field-col" style="color:#22c55e;">1016</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Goalkeeper</td><td class="type-col" style="font-size:10px;">2024-06-16</td></tr><tr><td class="field-col" style="color:#22c55e;">1020</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Winger</td><td class="type-col" style="font-size:10px;">2024-08-21</td></tr><tr><td class="field-col" style="color:#22c55e;">1027</td><td class="type-col" style="font-size:10px;">501 (Thunderbolts FC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Forward</td><td class="type-col" style="font-size:10px;">2024-12-06</td></tr><tr><td class="field-col" style="color:#22c55e;">1001</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-01-13</td></tr><tr><td class="field-col" style="color:#22c55e;">1001</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">All-Rounder</td><td class="type-col" style="font-size:10px;">2024-01-13</td></tr><tr><td class="field-col" style="color:#22c55e;">1007</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Opening Batsman</td><td class="type-col" style="font-size:10px;">2024-03-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1009</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Wicket-Keeper</td><td class="type-col" style="font-size:10px;">2024-03-16</td></tr><tr><td class="field-col" style="color:#22c55e;">1018</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Fast Bowler</td><td class="type-col" style="font-size:10px;">2024-07-15</td></tr><tr><td class="field-col" style="color:#22c55e;">1024</td><td class="type-col" style="font-size:10px;">502 (Apex Strikers CC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Spin Bowler</td><td class="type-col" style="font-size:10px;">2024-10-16</td></tr><tr><td class="field-col" style="color:#22c55e;">1014</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-05-19</td></tr><tr><td class="field-col" style="color:#22c55e;">1014</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Singles Player</td><td class="type-col" style="font-size:10px;">2024-05-19</td></tr><tr><td class="field-col" style="color:#22c55e;">1006</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Doubles Player</td><td class="type-col" style="font-size:10px;">2024-02-20</td></tr><tr><td class="field-col" style="color:#22c55e;">1019</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Singles Player</td><td class="type-col" style="font-size:10px;">2024-08-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1025</td><td class="type-col" style="font-size:10px;">503 (Ace Masters TC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Junior Player</td><td class="type-col" style="font-size:10px;">2024-11-03</td></tr><tr><td class="field-col" style="color:#22c55e;">1004</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-02-03</td></tr><tr><td class="field-col" style="color:#22c55e;">1004</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Singles Player</td><td class="type-col" style="font-size:10px;">2024-02-03</td></tr><tr><td class="field-col" style="color:#22c55e;">1012</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Doubles Player</td><td class="type-col" style="font-size:10px;">2024-04-21</td></tr><tr><td class="field-col" style="color:#22c55e;">1015</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Doubles Specialist</td><td class="type-col" style="font-size:10px;">2024-06-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1023</td><td class="type-col" style="font-size:10px;">504 (Smash Point BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Reserve Player</td><td class="type-col" style="font-size:10px;">2024-10-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1010</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-04-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1010</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Point Guard</td><td class="type-col" style="font-size:10px;">2024-04-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1003</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Shooting Guard</td><td class="type-col" style="font-size:10px;">2024-01-21</td></tr><tr><td class="field-col" style="color:#22c55e;">1017</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Power Forward</td><td class="type-col" style="font-size:10px;">2024-07-02</td></tr><tr><td class="field-col" style="color:#22c55e;">1022</td><td class="type-col" style="font-size:10px;">505 (Royal Hoops BC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Center</td><td class="type-col" style="font-size:10px;">2024-09-19</td></tr><tr><td class="field-col" style="color:#22c55e;">1013</td><td class="type-col" style="font-size:10px;">506 (Aqua Dolphins SC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Captain</td><td class="type-col" style="font-size:10px;">2024-05-06</td></tr><tr><td class="field-col" style="color:#22c55e;">1013</td><td class="type-col" style="font-size:10px;">506 (Aqua Dolphins SC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Lead Swimmer</td><td class="type-col" style="font-size:10px;">2024-05-06</td></tr><tr><td class="field-col" style="color:#22c55e;">1008</td><td class="type-col" style="font-size:10px;">506 (Aqua Dolphins SC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Freestyle Specialist</td><td class="type-col" style="font-size:10px;">2024-03-11</td></tr><tr><td class="field-col" style="color:#22c55e;">1021</td><td class="type-col" style="font-size:10px;">506 (Aqua Dolphins SC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Breaststroke Specialist</td><td class="type-col" style="font-size:10px;">2024-09-06</td></tr><tr><td class="field-col" style="color:#22c55e;">1026</td><td class="type-col" style="font-size:10px;">506 (Aqua Dolphins SC)</td><td style="color:#fff; font-weight:600; font-size:11px;">Backstroke Specialist</td><td class="type-col" style="font-size:10px;">2024-11-21</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 11: FILLED-IN RDBMS DATA (4/4) ==================== -->
+    <div class="slide" id="slide-11" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <h2 class="slide-title">FILLED-IN RDBMS DATA INSTANCES</h2>
+          <div class="slide-subtitle">Populated PostgreSQL tables &bull; Transactions Ledger, Coaching Clinics &amp; Tournament Matches</div>
+        </div>
+        <span class="slide-tag">04 / 04</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; overflow-y: auto; padding-right: 4px;">
+
+        <!-- PAYMENT DATA -->
+        <div class="schema-card" style="border-top: 3px solid #fb7185;">
+          <div class="schema-card-header">
+            <span>PAYMENT (Ledger)</span>
+            <span class="card-badge-pill">30 Financial Transactions</span>
+          </div>
+          <div style="max-height: 250px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>member</th><th>plan</th><th>amount</th><th>mode</th><th>status</th><th>tx_ref</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#fb7185;">8001</td><td class="type-col" style="font-size:10px;">1001</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240112_001</td></tr><tr><td class="field-col" style="color:#fb7185;">8002</td><td class="type-col" style="font-size:10px;">1002</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240115_002</td></tr><tr><td class="field-col" style="color:#fb7185;">8003</td><td class="type-col" style="font-size:10px;">1003</td><td class="type-col" style="font-size:10px;">101</td><td style="color:#4ade80; font-weight:600;">₹499.90</td><td class="type-col" style="font-size:10px;">Cash</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240120_003</td></tr><tr><td class="field-col" style="color:#fb7185;">8004</td><td class="type-col" style="font-size:10px;">1004</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Net Banking</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240202_004</td></tr><tr><td class="field-col" style="color:#fb7185;">8005</td><td class="type-col" style="font-size:10px;">1005</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240210_005</td></tr><tr><td class="field-col" style="color:#fb7185;">8006</td><td class="type-col" style="font-size:10px;">1006</td><td class="type-col" style="font-size:10px;">104</td><td style="color:#4ade80; font-weight:600;">₹1999.90</td><td class="type-col" style="font-size:10px;">Bank Transfer</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Pending</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240218_006</td></tr><tr><td class="field-col" style="color:#fb7185;">8007</td><td class="type-col" style="font-size:10px;">1007</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240301_007</td></tr><tr><td class="field-col" style="color:#fb7185;">8008</td><td class="type-col" style="font-size:10px;">1008</td><td class="type-col" style="font-size:10px;">105</td><td style="color:#4ade80; font-weight:600;">₹299.90</td><td class="type-col" style="font-size:10px;">Debit Card</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240310_008</td></tr><tr><td class="field-col" style="color:#fb7185;">8009</td><td class="type-col" style="font-size:10px;">1009</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240315_009</td></tr><tr><td class="field-col" style="color:#fb7185;">8010</td><td class="type-col" style="font-size:10px;">1010</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240401_010</td></tr><tr><td class="field-col" style="color:#fb7185;">8011</td><td class="type-col" style="font-size:10px;">1011</td><td class="type-col" style="font-size:10px;">101</td><td style="color:#4ade80; font-weight:600;">₹499.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Failed</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240412_011</td></tr><tr><td class="field-col" style="color:#fb7185;">8012</td><td class="type-col" style="font-size:10px;">1012</td><td class="type-col" style="font-size:10px;">104</td><td style="color:#4ade80; font-weight:600;">₹1999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240420_012</td></tr><tr><td class="field-col" style="color:#fb7185;">8013</td><td class="type-col" style="font-size:10px;">1013</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Net Banking</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240505_013</td></tr><tr><td class="field-col" style="color:#fb7185;">8014</td><td class="type-col" style="font-size:10px;">1014</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240518_014</td></tr><tr><td class="field-col" style="color:#fb7185;">8015</td><td class="type-col" style="font-size:10px;">1015</td><td class="type-col" style="font-size:10px;">101</td><td style="color:#4ade80; font-weight:600;">₹499.90</td><td class="type-col" style="font-size:10px;">Cash</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240601_015</td></tr><tr><td class="field-col" style="color:#fb7185;">8016</td><td class="type-col" style="font-size:10px;">1016</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240615_016</td></tr><tr><td class="field-col" style="color:#fb7185;">8017</td><td class="type-col" style="font-size:10px;">1017</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240701_017</td></tr><tr><td class="field-col" style="color:#fb7185;">8018</td><td class="type-col" style="font-size:10px;">1018</td><td class="type-col" style="font-size:10px;">104</td><td style="color:#4ade80; font-weight:600;">₹1999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Pending</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240714_018</td></tr><tr><td class="field-col" style="color:#fb7185;">8019</td><td class="type-col" style="font-size:10px;">1019</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Net Banking</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240801_019</td></tr><tr><td class="field-col" style="color:#fb7185;">8020</td><td class="type-col" style="font-size:10px;">1020</td><td class="type-col" style="font-size:10px;">105</td><td style="color:#4ade80; font-weight:600;">₹299.90</td><td class="type-col" style="font-size:10px;">Cash</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240820_020</td></tr><tr><td class="field-col" style="color:#fb7185;">8021</td><td class="type-col" style="font-size:10px;">1021</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240905_021</td></tr><tr><td class="field-col" style="color:#fb7185;">8022</td><td class="type-col" style="font-size:10px;">1022</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240918_022</td></tr><tr><td class="field-col" style="color:#fb7185;">8023</td><td class="type-col" style="font-size:10px;">1023</td><td class="type-col" style="font-size:10px;">101</td><td style="color:#4ade80; font-weight:600;">₹499.90</td><td class="type-col" style="font-size:10px;">Net Banking</td><td><span class="key-badge">Refunded</span></td><td class="type-col" style="font-size:9.5px;">TXN_20241001_023</td></tr><tr><td class="field-col" style="color:#fb7185;">8024</td><td class="type-col" style="font-size:10px;">1024</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20241015_024</td></tr><tr><td class="field-col" style="color:#fb7185;">8025</td><td class="type-col" style="font-size:10px;">1025</td><td class="type-col" style="font-size:10px;">104</td><td style="color:#4ade80; font-weight:600;">₹1999.90</td><td class="type-col" style="font-size:10px;">Debit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20241102_025</td></tr><tr><td class="field-col" style="color:#fb7185;">8026</td><td class="type-col" style="font-size:10px;">1026</td><td class="type-col" style="font-size:10px;">101</td><td style="color:#4ade80; font-weight:600;">₹499.90</td><td class="type-col" style="font-size:10px;">Cash</td><td><span class="key-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Expired</span></td><td class="type-col" style="font-size:9.5px;">TXN_20241120_026</td></tr><tr><td class="field-col" style="color:#fb7185;">8027</td><td class="type-col" style="font-size:10px;">1027</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20241205_027</td></tr><tr><td class="field-col" style="color:#fb7185;">8028</td><td class="type-col" style="font-size:10px;">1001</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">UPI</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20250110_028</td></tr><tr><td class="field-col" style="color:#fb7185;">8029</td><td class="type-col" style="font-size:10px;">1002</td><td class="type-col" style="font-size:10px;">103</td><td style="color:#4ade80; font-weight:600;">₹4999.90</td><td class="type-col" style="font-size:10px;">Credit Card</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20250112_029</td></tr><tr><td class="field-col" style="color:#fb7185;">8030</td><td class="type-col" style="font-size:10px;">1004</td><td class="type-col" style="font-size:10px;">102</td><td style="color:#4ade80; font-weight:600;">₹1399.90</td><td class="type-col" style="font-size:10px;">Net Banking</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Paid</span></td><td class="type-col" style="font-size:9.5px;">TXN_20240502_030</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TRAINING_SESSION DATA -->
+        <div class="schema-card" style="border-top: 3px solid #14b8a6;">
+          <div class="schema-card-header">
+            <span>TRAINING_SESSION</span>
+            <span class="card-badge-pill">9 Clinics</span>
+          </div>
+          <div style="max-height: 250px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>sport</th><th>coach</th><th>venue</th><th>date</th><th>time</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#14b8a6;">601</td><td class="type-col" style="font-size:10px;">201 (Football)</td><td class="type-col" style="font-size:10px;">401 (C. Mendez)</td><td class="type-col" style="font-size:10px;">301 (Main Arena)</td><td class="type-col" style="font-size:10px;">2025-02-15</td><td class="type-col" style="font-size:10px;">07:00 - 09:00</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">602</td><td class="type-col" style="font-size:10px;">202 (Cricket)</td><td class="type-col" style="font-size:10px;">402 (V. Singhania)</td><td class="type-col" style="font-size:10px;">302 (Imperial Oval)</td><td class="type-col" style="font-size:10px;">2025-02-16</td><td class="type-col" style="font-size:10px;">08:00 - 11:00</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">603</td><td class="type-col" style="font-size:10px;">205 (Tennis)</td><td class="type-col" style="font-size:10px;">403 (E. Rostova)</td><td class="type-col" style="font-size:10px;">303 (Grand Slam)</td><td class="type-col" style="font-size:10px;">2025-02-17</td><td class="type-col" style="font-size:10px;">16:00 - 18:00</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">604</td><td class="type-col" style="font-size:10px;">203 (Badminton)</td><td class="type-col" style="font-size:10px;">404 (L. W. Chen)</td><td class="type-col" style="font-size:10px;">304 (Smash Point)</td><td class="type-col" style="font-size:10px;">2025-02-18</td><td class="type-col" style="font-size:10px;">17:00 - 19:00</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">605</td><td class="type-col" style="font-size:10px;">204 (Basketball)</td><td class="type-col" style="font-size:10px;">405 (M. A. Hayes)</td><td class="type-col" style="font-size:10px;">305 (Skyline Dome)</td><td class="type-col" style="font-size:10px;">2025-02-19</td><td class="type-col" style="font-size:10px;">18:00 - 20:00</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">606</td><td class="type-col" style="font-size:10px;">206 (Swimming)</td><td class="type-col" style="font-size:10px;">406 (S. Jenkins)</td><td class="type-col" style="font-size:10px;">306 (Olympic Pool)</td><td class="type-col" style="font-size:10px;">2025-02-20</td><td class="type-col" style="font-size:10px;">06:30 - 08:30</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">607</td><td class="type-col" style="font-size:10px;">201 (Football)</td><td class="type-col" style="font-size:10px;">401 (C. Mendez)</td><td class="type-col" style="font-size:10px;">301 (Main Arena)</td><td class="type-col" style="font-size:10px;">2026-10-05</td><td class="type-col" style="font-size:10px;">07:00 - 09:00</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Scheduled</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">608</td><td class="type-col" style="font-size:10px;">202 (Cricket)</td><td class="type-col" style="font-size:10px;">402 (V. Singhania)</td><td class="type-col" style="font-size:10px;">302 (Imperial Oval)</td><td class="type-col" style="font-size:10px;">2026-10-06</td><td class="type-col" style="font-size:10px;">08:00 - 11:00</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Scheduled</span></td></tr><tr><td class="field-col" style="color:#14b8a6;">609</td><td class="type-col" style="font-size:10px;">204 (Basketball)</td><td class="type-col" style="font-size:10px;">405 (M. A. Hayes)</td><td class="type-col" style="font-size:10px;">305 (Skyline Dome)</td><td class="type-col" style="font-size:10px;">2026-10-07</td><td class="type-col" style="font-size:10px;">18:00 - 20:00</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Scheduled</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TOURNAMENT DATA -->
+        <div class="schema-card" style="border-top: 3px solid #a855f7;">
+          <div class="schema-card-header">
+            <span>TOURNAMENT</span>
+            <span class="card-badge-pill">3 Championships</span>
+          </div>
+          <div style="max-height: 250px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>name</th><th>sport</th><th>dates</th><th>format</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#a855f7;">9001</td><td style="color:#fff; font-weight:600; font-size:11px;">Inter-Club Football Super League</td><td class="type-col" style="font-size:10px;">201 (Football)</td><td class="type-col" style="font-size:10px;">2025-03-01 to 2025-03-20</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">League</span></td></tr><tr><td class="field-col" style="color:#a855f7;">9002</td><td style="color:#fff; font-weight:600; font-size:11px;">Champions Cricket Cup 2025</td><td class="type-col" style="font-size:10px;">202 (Cricket)</td><td class="type-col" style="font-size:10px;">2025-04-05 to 2025-04-25</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Round Robin</span></td></tr><tr><td class="field-col" style="color:#a855f7;">9003</td><td style="color:#fff; font-weight:600; font-size:11px;">Autumn Invitational Basketball Trophy</td><td class="type-col" style="font-size:10px;">204 (Basketball)</td><td class="type-col" style="font-size:10px;">2025-05-10 to 2025-05-25</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Knockout</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FIXTURE DATA -->
+        <div class="schema-card" style="border-top: 3px solid #d97706;">
+          <div class="schema-card-header">
+            <span>FIXTURE (Match Schedule)</span>
+            <span class="card-badge-pill">6 Squad Matches</span>
+          </div>
+          <div style="max-height: 250px; overflow-y: auto;">
+            <table class="db-table">
+              <thead>
+                <tr><th>id</th><th>tournament</th><th>team 1 vs team 2</th><th>date</th><th>venue</th><th>status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="field-col" style="color:#d97706;">911</td><td class="type-col" style="font-size:10px;">9001 (Super League)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">701 (Thunderbolts Sr A)</span> vs <span style="color:#fbcfe8;">702 (Thunderbolts U-21)</span></td><td class="type-col" style="font-size:10px;">2025-03-05 16:00</td><td class="type-col" style="font-size:10px;">301 (Main Arena)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#d97706;">912</td><td class="type-col" style="font-size:10px;">9001 (Super League)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">702 (Thunderbolts U-21)</span> vs <span style="color:#fbcfe8;">701 (Thunderbolts Sr A)</span></td><td class="type-col" style="font-size:10px;">2025-03-12 16:00</td><td class="type-col" style="font-size:10px;">301 (Main Arena)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#d97706;">913</td><td class="type-col" style="font-size:10px;">9002 (Cricket Cup)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">703 (Apex Strikers XI)</span> vs <span style="color:#fbcfe8;">704 (Apex Colts XI)</span></td><td class="type-col" style="font-size:10px;">2025-04-10 10:00</td><td class="type-col" style="font-size:10px;">302 (Cricket Oval)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#d97706;">914</td><td class="type-col" style="font-size:10px;">9003 (Basketball Trophy)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">707 (Royal Hoops Varsity)</span> vs <span style="color:#fbcfe8;">708 (Royal Hoops Ballers)</span></td><td class="type-col" style="font-size:10px;">2025-05-15 18:00</td><td class="type-col" style="font-size:10px;">305 (Skyline Dome)</td><td><span class="key-badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">Completed</span></td></tr><tr><td class="field-col" style="color:#d97706;">915</td><td class="type-col" style="font-size:10px;">9001 (Super League)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">701 (Thunderbolts Sr A)</span> vs <span style="color:#fbcfe8;">702 (Thunderbolts U-21)</span></td><td class="type-col" style="font-size:10px;">2026-10-15 17:00</td><td class="type-col" style="font-size:10px;">301 (Main Arena)</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Scheduled</span></td></tr><tr><td class="field-col" style="color:#d97706;">916</td><td class="type-col" style="font-size:10px;">9002 (Cricket Cup)</td><td style="color:#fff; font-size:10.5px;"><span style="color:#93c5fd;">703 (Apex Strikers XI)</span> vs <span style="color:#fbcfe8;">704 (Apex Colts XI)</span></td><td class="type-col" style="font-size:10px;">2026-10-20 09:30</td><td class="type-col" style="font-size:10px;">302 (Cricket Oval)</td><td><span class="key-badge" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">Scheduled</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 12: QUERY EXECUTION ==================== -->
+    <div class="slide" id="slide-12" data-slide="12">
+      <div class="center-slide-content">
+        <h1 class="section-title">SQL QUERY EXECUTION &amp; RESULT SETS</h1>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Floating Navigation & Controls -->
+  <div id="controls-bar">
+    <button class="control-btn" id="prev-btn" onclick="prevSlide()" title="Previous (Left Arrow / Page Up)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Prev
+    </button>
+    <span class="slide-indicator" id="slide-counter">01 / 12</span>
+    <button class="control-btn" id="next-btn" onclick="nextSlide()" title="Next (Right Arrow / Space / Page Down)">
+      Next
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+    <div style="width: 1px; height: 18px; background: var(--border-color); margin: 0 4px;"></div>
+    <button class="control-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+    </button>
+    <button class="control-btn" onclick="window.print()" title="Print / Export as PDF">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print / PDF
+    </button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((slide, i) => {
+        if (i + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      const pad = (n) => String(n).padStart(2, '0');
+      document.getElementById('slide-counter').textContent = `${pad(currentSlide)} / ${pad(totalSlides)}`;
+      document.getElementById('progress-bar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+      document.getElementById('prev-btn').disabled = currentSlide === 1;
+      document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Touch swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    window.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) {
+        nextSlide();
+      } else if (touchEndX > touchStartX + 50) {
+        prevSlide();
+      }
+    }, false);
+
+    // Initial setup
+    showSlide(1);
+  </script>
+</body>
+</html>
