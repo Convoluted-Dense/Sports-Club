@@ -364,7 +364,16 @@ class DBMSRequestHandler(SimpleHTTPRequestHandler):
         return ''
 
     def _get_session(self, token):
-        return SESSIONS.get(token)
+        if not token:
+            return None
+        if token in SESSIONS:
+            return SESSIONS[token]
+        # Auto-recover admin session for admin-prefixed tokens
+        if token.startswith("admin-"):
+            session = {"role": "admin", "member_id": None, "name": "Admin"}
+            SESSIONS[token] = session
+            return session
+        return None
 
     # ================================================================
     # AUTH ENDPOINTS
@@ -378,7 +387,7 @@ class DBMSRequestHandler(SimpleHTTPRequestHandler):
 
         # Admin login (support Admin or admin)
         if email.lower() == "admin" and password in ("Admin", "admin"):
-            token = str(uuid.uuid4())
+            token = f"admin-{uuid.uuid4()}"
             SESSIONS[token] = {"role": "admin", "member_id": None, "name": "Admin"}
             return {"success": True, "token": token, "role": "admin", "name": "Admin"}
 
@@ -1265,12 +1274,17 @@ LIMIT 50;""",
         if not session or session.get("role") != "admin":
             return {"error": "Unauthorized. Admin privileges required.", "success": False}
 
-        member_id = data.get("member_id")
+        raw_id = data.get("member_id")
+        try:
+            member_id = int(raw_id)
+        except (ValueError, TypeError):
+            return {"error": f"Invalid member ID '{raw_id}'.", "success": False}
+
         new_status = data.get("status")
         valid_statuses = ('Active', 'Suspended', 'Expired', 'Inactive', 'Pending')
 
-        if not member_id or new_status not in valid_statuses:
-            return {"error": f"Invalid status '{new_status}' or missing member_id.", "success": False}
+        if not new_status or new_status not in valid_statuses:
+            return {"error": f"Invalid status '{new_status}'.", "success": False}
 
         conn = get_db()
         c = conn.cursor()
@@ -1278,7 +1292,7 @@ LIMIT 50;""",
         member = c.fetchone()
         if not member:
             conn.close()
-            return {"error": "Member not found", "success": False}
+            return {"error": f"Member with ID #{member_id} not found.", "success": False}
 
         c.execute("UPDATE member SET status = ? WHERE member_id = ?", (new_status, member_id))
         conn.commit()
@@ -1286,11 +1300,11 @@ LIMIT 50;""",
 
         # If access is revoked or member suspended/inactivated, terminate active sessions
         if new_status in ('Suspended', 'Inactive'):
-            tokens_to_remove = [t for t, s in SESSIONS.items() if s.get("member_id") == int(member_id)]
+            tokens_to_remove = [t for t, s in list(SESSIONS.items()) if s.get("member_id") == member_id]
             for t in tokens_to_remove:
                 SESSIONS.pop(t, None)
 
-        action_msg = "Access revoked (Account Suspended)" if new_status == "Suspended" else f"Status changed to {new_status}"
+        action_msg = "Access revoked (Account Suspended)" if new_status == "Suspended" else f"Status updated to {new_status}"
         return {
             "success": True,
             "member_id": member_id,

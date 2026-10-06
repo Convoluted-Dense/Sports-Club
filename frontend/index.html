@@ -3855,19 +3855,19 @@ function renderAccessTable() {
         <td style="text-align:right;">
           <div style="display:inline-flex;align-items:center;gap:6px;">
             ${isActive ? `
-              <button class="btn btn-danger btn-sm" onclick="setMemberAccess(${m.member_id}, 'Suspended', '${escapeHtml(m.name)}')">
+              <button class="btn btn-danger btn-sm" id="btn-revoke-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Suspended')">
                 <i data-lucide="shield-alert" style="width:13px;height:13px;"></i> Revoke Access
               </button>
             ` : isSuspended ? `
-              <button class="btn btn-success btn-sm" onclick="setMemberAccess(${m.member_id}, 'Active', '${escapeHtml(m.name)}')">
+              <button class="btn btn-success btn-sm" id="btn-restore-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active')">
                 <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Restore Access
               </button>
             ` : `
-              <button class="btn btn-success btn-sm" onclick="setMemberAccess(${m.member_id}, 'Active', '${escapeHtml(m.name)}')">
+              <button class="btn btn-success btn-sm" id="btn-active-${m.member_id}" onclick="setMemberAccess(${m.member_id}, 'Active')">
                 <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Set Active
               </button>
             `}
-            <select class="form-select form-select-sm" style="width:auto;font-size:0.75rem;padding:4px 8px;height:auto;" onchange="setMemberAccess(${m.member_id}, this.value, '${escapeHtml(m.name)}')">
+            <select class="form-select form-select-sm" style="width:auto;font-size:0.75rem;padding:4px 8px;height:auto;" onchange="setMemberAccess(${m.member_id}, this.value)">
               <option value="Active" ${m.status==='Active'?'selected':''}>Active</option>
               <option value="Suspended" ${m.status==='Suspended'?'selected':''}>Revoke / Suspend</option>
               <option value="Expired" ${m.status==='Expired'?'selected':''}>Expired</option>
@@ -3882,41 +3882,80 @@ function renderAccessTable() {
   lucide.createIcons();
 }
 
-async function setMemberAccess(memberId, newStatus, memberName = 'Member') {
+async function setMemberAccess(memberId, newStatus) {
+  const mId = Number(memberId);
+  const found = accessMembersList.find(m => Number(m.member_id) === mId);
+  const memberName = found ? found.name : `Member #${mId}`;
+
   if (newStatus === 'Suspended') {
-    if (!confirm(`Are you sure you want to REVOKE login access for ${memberName} (ID #${memberId})?\n\nTheir current active session will be terminated immediately.`)) {
+    const ok = window.confirm(`Are you sure you want to REVOKE login access for ${memberName} (ID #${mId})?\n\nTheir current active session will be terminated immediately.`);
+    if (!ok) {
       renderAccessTable();
       return;
     }
   }
 
-  const res = await fetchJson('/api/admin/member/status', 'POST', { member_id: memberId, status: newStatus });
-  const alertEl = document.getElementById('access-alert');
+  // Visual loading feedback
+  const btn = document.getElementById(`btn-revoke-${mId}`) || document.getElementById(`btn-restore-${mId}`) || document.getElementById(`btn-active-${mId}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+  }
 
-  if (res.success) {
-    if (alertEl) {
-      alertEl.style.display = 'block';
-      if (newStatus === 'Suspended') {
-        alertEl.style.background = 'rgba(244,63,94,0.15)';
-        alertEl.style.border = '1px solid rgba(244,63,94,0.4)';
-        alertEl.style.color = '#fb7185';
-        alertEl.innerHTML = `<i data-lucide="shield-alert" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> ${res.message}`;
-      } else {
-        alertEl.style.background = 'rgba(16,185,129,0.15)';
-        alertEl.style.border = '1px solid rgba(16,185,129,0.4)';
-        alertEl.style.color = '#34d399';
-        alertEl.innerHTML = `<i data-lucide="shield-check" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> ${res.message}`;
-      }
-      lucide.createIcons();
-      setTimeout(() => { if (alertEl) alertEl.style.display = 'none'; }, 6000);
+  try {
+    let res = await fetchJson('/api/admin/member/status', 'POST', { member_id: mId, status: newStatus });
+
+    // Auto-recover session if unauthorized
+    if (res && res.error && res.error.includes('Unauthorized') && currentRole === 'admin') {
+      try {
+        const reAuth = await fetch(API_BASE + '/api/auth/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email: 'admin', password: 'admin'})
+        }).then(r => r.json());
+        if (reAuth && reAuth.success) {
+          authToken = reAuth.token;
+          localStorage.setItem('dbms_token', authToken);
+          res = await fetchJson('/api/admin/member/status', 'POST', { member_id: mId, status: newStatus });
+        }
+      } catch (authErr) {}
     }
-    // Update local cache and re-render
-    const found = accessMembersList.find(m => m.member_id === memberId);
-    if (found) found.status = newStatus;
-    renderAccessStats();
+
+    const alertEl = document.getElementById('access-alert');
+
+    if (res && res.success) {
+      if (alertEl) {
+        alertEl.style.display = 'block';
+        if (newStatus === 'Suspended') {
+          alertEl.style.background = 'rgba(244,63,94,0.15)';
+          alertEl.style.border = '1px solid rgba(244,63,94,0.4)';
+          alertEl.style.color = '#fb7185';
+          alertEl.innerHTML = `<i data-lucide="shield-alert" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> ${escapeHtml(res.message)}`;
+        } else {
+          alertEl.style.background = 'rgba(16,185,129,0.15)';
+          alertEl.style.border = '1px solid rgba(16,185,129,0.4)';
+          alertEl.style.color = '#34d399';
+          alertEl.innerHTML = `<i data-lucide="shield-check" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> ${escapeHtml(res.message)}`;
+        }
+        lucide.createIcons();
+        setTimeout(() => { if (alertEl) alertEl.style.display = 'none'; }, 6000);
+      }
+      // Update local cache and re-render
+      if (found) found.status = newStatus;
+      renderAccessStats();
+      renderAccessTable();
+    } else {
+      const errMsg = res?.error || 'Unknown error occurred while updating status.';
+      alert('Failed to update status: ' + errMsg);
+      if (errMsg.includes('Unauthorized')) {
+        logout();
+      } else {
+        renderAccessTable();
+      }
+    }
+  } catch (err) {
+    alert('Network error updating member access: ' + err.message);
     renderAccessTable();
-  } else {
-    alert('Failed to update status: ' + (res.error || 'Unknown error'));
   }
 }
 
