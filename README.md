@@ -137,7 +137,8 @@ Sports-Club/
 ├── frontend/
 │   ├── index.html             # Single-Page Web App (Admin Cockpit & Member Portal)
 │   ├── er_diagram.html        # Interactive visual ER diagram studio
-│   ├── presentation.html      # Interactive slide presentation deck
+│   ├── presentation.html      # Interactive slide presentation deck (Full System)
+│   ├── presentation1.html     # Interactive slide deck (Phase 1: Conceptual Design)
 │   └── er.jpeg                # High-definition ER diagram graphic
 ├── sql/
 │   ├── schema.sql             # 3NF relational schema DDL (12 tables, views, triggers)
@@ -146,7 +147,8 @@ Sports-Club/
 │   ├── sports_club.db         # SQLite relational database instance
 │   └── setup_database.ps1     # Automated PostgreSQL setup script
 ├── presentation/
-│   └── presentation2.pdf      # High-definition widescreen slide deck PDF
+│   ├── presentation1.pdf      # Phase 1 Conceptual Design & Architecture Slide Deck (PDF)
+│   └── presentation2.pdf      # High-definition widescreen full slide deck (PDF)
 ├── reports/
 │   └── Sports_Club_DBMS_Project_Report.pdf # Academic Project Report (A4 PDF)
 ├── .gitignore                 # Git ignore rules

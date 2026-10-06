@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Club Management System — Phase 1 Conceptual Design & Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0c10;
+      --bg-secondary: #11151f;
+      --bg-card: #141923;
+      --bg-card-hover: #1c2331;
+      --bg-table-header: #1b2333;
+      --bg-table-row: #121722;
+      --bg-table-row-alt: #161c28;
+      --border-color: #273347;
+      --border-subtle: #1e2838;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --badge-pk: #f59e0b;
+      --badge-fk: #10b981;
+      --badge-unique: #06b6d4;
+      --badge-nn: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050608;
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    #presentation-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #050608;
+    }
+
+    .slide {
+      position: absolute;
+      width: min(96vw, calc(96vh * 16 / 9));
+      height: min(calc(96vw * 9 / 16), 96vh);
+      max-width: 1920px;
+      max-height: 1080px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      display: none;
+      flex-direction: column;
+      padding: 40px 52px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Slide Header */
+    .slide-header {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-title-accent {
+      color: var(--accent-blue);
+    }
+
+    .slide-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 5px;
+      letter-spacing: 0.02em;
+    }
+
+    .slide-tag {
+      font-size: 12.5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--accent-blue);
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    /* Slide Body */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      height: 100%;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+
+    .card-body {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .card-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .card-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .card-list li::before {
+      content: "▹";
+      color: var(--accent-blue);
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-table-row);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background-color: var(--bg-table-header);
+      color: #ffffff;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    table.data-table td {
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      vertical-align: middle;
+      line-height: 1.38;
+    }
+
+    table.data-table tr:nth-child(even) td {
+      background-color: var(--bg-table-row-alt);
+    }
+
+    table.data-table tr:hover td {
+      background-color: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-pk { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
+    .badge-fk { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .badge-unique { background: rgba(6, 182, 212, 0.18); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.45); }
+    .badge-blue { background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); }
+
+    .code-box {
+      background: #090d15;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.48;
+      color: #93c5fd;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Title Slide Specifics */
+    .title-slide-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      padding: 16px 10px;
+    }
+
+    .title-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+
+    .title-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: auto 0;
+    }
+
+    .main-project-title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      line-height: 1.25;
+      color: #ffffff;
+      max-width: 1100px;
+      margin-bottom: 14px;
+      text-shadow: 0 4px 25px rgba(56, 189, 248, 0.3);
+    }
+
+    .main-project-sub {
+      font-size: 17px;
+      color: var(--accent-blue);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+
+    .title-meta-pill-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .title-meta-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+
+    .title-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 18px 28px;
+    }
+
+    .meta-box h4 {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .meta-box .meta-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .meta-box .meta-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* ER Diagram Image Slide */
+    .er-diagram-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0e121a;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .er-diagram-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    /* Entity Detailed Card Grid */
+    .entity-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      height: 100%;
+    }
+
+    .entity-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .entity-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 6px;
+    }
+
+    .entity-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .entity-attr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .attr-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .attr-name {
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .attr-type {
+      color: var(--text-dim);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* UI Controls & Navigation */
+    #controls {
+      position: fixed;
+      bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(18, 22, 31, 0.88);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      padding: 8px 22px;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .btn-nav {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    #slide-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 1000;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="presentation-container">
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <!-- ===================================================================== -->
+    <div class="slide active" id="slide-1">
+      <div class="title-slide-content">
+        <div class="title-top">
+          <div style="font-size: 13.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase;">
+            Department of Computer Science &amp; Engineering
+          </div>
+          <div class="slide-tag">DBMS Laboratory Project &bull; Phase 1</div>
+        </div>
+
+        <div class="title-center">
+          <h1 class="main-project-title">Sports Club Membership &amp; Tournament Management System</h1>
+          <div class="main-project-sub">Phase 1: Conceptual Modeling, Entity-Relationship Design &amp; Relational Schema (3NF)</div>
+          
+          <div class="title-meta-pill-container">
+            <span class="title-meta-pill">12 Normalized Relations</span>
+            <span class="title-meta-pill">Entity-Relationship Architecture</span>
+            <span class="title-meta-pill">Third Normal Form (3NF)</span>
+            <span class="title-meta-pill">ACID Compliance</span>
+            <span class="title-meta-pill">SQL Triggers &amp; Views</span>
+          </div>
+        </div>
+
+        <div class="title-bottom">
+          <div class="meta-box">
+            <h4>Submitted By (Student)</h4>
+            <div class="meta-name">Sheikh Arsh Ali</div>
+            <div class="meta-sub">Roll No: <strong>25WU0102255</strong> | B.Tech Computer Science &amp; Engineering</div>
+          </div>
+          <div class="meta-box">
+            <h4>Faculty Supervisor</h4>
+            <div class="meta-name">Dr. Kiran Mayee</div>
+            <div class="meta-sub">Professor / Faculty Guide &bull; Department of CSE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 2: PROJECT OVERVIEW & INTRODUCTION -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">1.0 Project Overview <span class="slide-title-accent">&bull; Introduction</span></div>
+          <div class="slide-subtitle">Centralizing athletic operations, memberships, facilities, and competitive tournaments</div>
+        </div>
+        <div class="slide-tag">FOUNDATION</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">📌 Background &amp; Motivation</div>
+            <div class="card-body">
+              Modern athletic facilities and sports clubs operate across diverse disciplines (Cricket, Football, Tennis, Swimming, Badminton, Basketball). Managing these operations requires coordinating hundreds of athlete memberships, certified coaches, training facility slots, subscription fee collections, and tournament schedules.
+            </div>
+            <div class="card-list">
+              <li><strong>Multi-Disciplinary Scope:</strong> Unified platform managing athletes across 6+ sports simultaneously.</li>
+              <li><strong>Relational Paradigm:</strong> Eliminates legacy spreadsheet islands and paper logs with ACID-compliant storage.</li>
+              <li><strong>Role-Based Access:</strong> Dedicated privileges for System Administrators, Coaches, and Athlete Members.</li>
+              <li><strong>Data Integrity &amp; Automation:</strong> Guaranteed atomicity in financial transactions and automated schedule overlap prevention.</li>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">⚡ Core Operational Domains</div>
+            <div class="card-list">
+              <li><strong>Athlete Profiles &amp; Authentication:</strong> Demographic data, SHA-256 password hashing, and membership lifecycle states (Active, Expired, Suspended).</li>
+              <li><strong>Club Franchises &amp; Tactical Rosters:</strong> Many-to-Many team enrollments with specific positional roles (Striker, Wicketkeeper, Point Guard).</li>
+              <li><strong>Multi-Tier Subscriptions &amp; Billing:</strong> Flexible plan tiers (Monthly, Quarterly, Gold Pass) with multi-mode payment auditing.</li>
+              <li><strong>Training &amp; Facility Scheduling:</strong> Ground/court reservations with capacity tracking and conflict avoidance.</li>
+              <li><strong>Tournament Brackets &amp; Match Fixtures:</strong> League/knockout match organization with automated standings computation.</li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 3: PROBLEM STATEMENT & CHALLENGES -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">2.0 Problem Statement <span class="slide-title-accent">&bull; Operational Challenges</span></div>
+          <div class="slide-subtitle">Overcoming critical anomalies and bottlenecks in traditional club administration</div>
+        </div>
+        <div class="slide-tag">CHALLENGES</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title" style="color: #f87171;">❌ Data Redundancy &amp; Anomalies</div>
+            <div class="card-body">
+              <strong>Insertion &amp; Deletion Anomalies:</strong>
+              <p>In un-normalized schemas, coach contact details or sport definitions cannot be added without enrolling a member, leading to NULL values and inconsistent records.</p>
+              <br>
+              <strong>Update Inconsistencies:</strong>
+              <p>Modifying a coach's phone number across multiple spreadsheet sheets often leaves orphaned or contradictory records.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="color: #fbbf24;">⚠️ Scheduling &amp; Venue Overlaps</div>
+            <div class="card-body">
+              <strong>Double-Booking Facilities:</strong>
+              <p>Simultaneous training sessions and tournament matches scheduled at the same stadium turf or indoor arena create major operational collisions.</p>
+              <br>
+              <strong>Sport Incompatibility:</strong>
+              <p>Without database validation triggers, tournament fixtures can mistakenly pair teams registered under different sports disciplines.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="color: #60a5fa;">💳 Financial &amp; Roster Blindspots</div>
+            <div class="card-body">
+              <strong>Uncollected Subscription Fees:</strong>
+              <p>Lack of atomic transaction linking allows athletes with expired dues to continue booking premium training sessions.</p>
+              <br>
+              <strong>Untracked Player Roster Roles:</strong>
+              <p>No historical tracking of tactical positions or membership duration across multiple clubs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 4: PROJECT OBJECTIVES & SCOPE -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">3.0 Project Objectives <span class="slide-title-accent">&bull; System Scope</span></div>
+          <div class="slide-subtitle">Architectural goals and engineering scope for the relational database system</div>
+        </div>
+        <div class="slide-tag">OBJECTIVES</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🎯 Primary Project Objectives</div>
+            <div class="card-list">
+              <li><strong>3NF Normalization:</strong> Decompose data into 12 atomic relations with zero transitive dependencies to guarantee mathematical data integrity.</li>
+              <li><strong>Enforce Referential &amp; Domain Constraints:</strong> Utilize Foreign Keys, composite primary keys, and CHECK constraints for all vital fields.</li>
+              <li><strong>Automated Business Integrity Triggers:</strong> Implement procedural triggers preventing venue booking collisions and tournament team sport mismatches.</li>
+              <li><strong>Sub-Millisecond Query Performance:</strong> Pre-compile analytical views (`v_club_rosters`, `v_tournament_standings`, `v_facility_utilization`) for high throughput.</li>
+              <li><strong>Full-Stack Interoperability:</strong> Seamless interface with Python HTTP backend and interactive Single-Page Application (SPA).</li>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📐 Functional Scope Breakdown</div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Subsystem</th>
+                    <th>Core Responsibilities</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Membership Module</strong></td>
+                    <td>Athlete registrations, demographics, login authentication, status monitoring.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Finance &amp; Ledger</strong></td>
+                    <td>Plan subscriptions, multi-mode payment auditing, GST invoices, renewal alerts.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Club &amp; Roster Module</strong></td>
+                    <td>Franchise management, head coach assignments, tactical role enrollment.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Facility &amp; Training</strong></td>
+                    <td>Court/pitch reservations, practice slot capacity control, coach supervision.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tournament &amp; Match</strong></td>
+                    <td>Knockout &amp; league fixture generation, scoring results, points standings.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 5: CORE ENTITIES & ATTRIBUTE CATALOG -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">4.0 Entity Identification <span class="slide-title-accent">&bull; Attribute Catalog</span></div>
+          <div class="slide-subtitle">Classification of strong, weak, and associative entities with key attributes</div>
+        </div>
+        <div class="slide-tag">DATA MODEL</div>
+      </div>
+      <div class="slide-body">
+        <div class="entity-card-grid">
+          <!-- Card 1 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">MEMBER</span>
+              <span class="badge badge-pk">member_id (PK)</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">name</span><span class="attr-type">VARCHAR(100) NOT NULL</span></div>
+              <div class="attr-row"><span class="attr-name">gender</span><span class="attr-type">VARCHAR(10) CHECK</span></div>
+              <div class="attr-row"><span class="attr-name">email</span><span class="attr-type">VARCHAR UNIQUE</span></div>
+              <div class="attr-row"><span class="attr-name">password</span><span class="attr-type">SHA-256 HASH</span></div>
+              <div class="attr-row"><span class="attr-name">phone / address</span><span class="attr-type">VARCHAR / TEXT</span></div>
+              <div class="attr-row"><span class="attr-name">join_date / status</span><span class="attr-type">DATE / VARCHAR</span></div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">CLUB &amp; ROSTER</span>
+              <span class="badge badge-pk">club_id (PK)</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">club_name</span><span class="attr-type">VARCHAR(100) NOT NULL</span></div>
+              <div class="attr-row"><span class="attr-name">sport_id</span><span class="badge badge-fk">FK &rarr; sport</span></div>
+              <div class="attr-row"><span class="attr-name">coach_id</span><span class="badge badge-fk">FK &rarr; coach</span></div>
+              <div class="attr-row"><span class="attr-name">status</span><span class="attr-type">VARCHAR CHECK</span></div>
+              <div class="attr-row"><span class="attr-name">CLUB_MEMBER</span><span class="badge badge-pk">(m_id, c_id, role)</span></div>
+              <div class="attr-row"><span class="attr-name">join_date</span><span class="attr-type">DATE DEFAULT</span></div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">PAYMENT &amp; PLAN</span>
+              <span class="badge badge-pk">payment_id (PK)</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">member_id / plan_id</span><span class="badge badge-fk">FKs &rarr; member, plan</span></div>
+              <div class="attr-row"><span class="attr-name">amount</span><span class="attr-type">DECIMAL(10,2) &gt; 0</span></div>
+              <div class="attr-row"><span class="attr-name">payment_mode</span><span class="attr-type">VARCHAR CHECK</span></div>
+              <div class="attr-row"><span class="attr-name">transaction_ref</span><span class="attr-type">VARCHAR UNIQUE</span></div>
+              <div class="attr-row"><span class="attr-name">payment_date / status</span><span class="attr-type">DATE / VARCHAR</span></div>
+              <div class="attr-row"><span class="attr-name">duration_months</span><span class="attr-type">INT IN PLAN</span></div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">SPORT &amp; COACH</span>
+              <span class="badge badge-pk">sport_id / coach_id</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">sport.sport_name</span><span class="attr-type">VARCHAR UNIQUE</span></div>
+              <div class="attr-row"><span class="attr-name">coach.name</span><span class="attr-type">VARCHAR(100) NOT NULL</span></div>
+              <div class="attr-row"><span class="attr-name">coach.email</span><span class="attr-type">VARCHAR UNIQUE</span></div>
+              <div class="attr-row"><span class="attr-name">coach.phone</span><span class="attr-type">VARCHAR(20)</span></div>
+              <div class="attr-row"><span class="attr-name">discipline_code</span><span class="attr-type">INDEXED</span></div>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">FACILITY &amp; SESSION</span>
+              <span class="badge badge-pk">facility_id / session_id</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">facility.name / type</span><span class="attr-type">VARCHAR NOT NULL</span></div>
+              <div class="attr-row"><span class="attr-name">facility.capacity</span><span class="attr-type">INT CHECK &gt; 0</span></div>
+              <div class="attr-row"><span class="attr-name">session.venue_id</span><span class="badge badge-fk">FK &rarr; facility</span></div>
+              <div class="attr-row"><span class="attr-name">coach_id / sport_id</span><span class="badge badge-fk">FKs &rarr; coach, sport</span></div>
+              <div class="attr-row"><span class="attr-name">start_time / end_time</span><span class="attr-type">TIME (end &gt; start)</span></div>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="entity-card">
+            <div class="entity-card-header">
+              <span class="entity-card-title">TOURNAMENT &amp; FIXTURE</span>
+              <span class="badge badge-pk">tournament_id / fixture_id</span>
+            </div>
+            <div class="entity-attr-list">
+              <div class="attr-row"><span class="attr-name">tournament.name / type</span><span class="attr-type">VARCHAR NOT NULL</span></div>
+              <div class="attr-row"><span class="attr-name">start_date / end_date</span><span class="attr-type">DATE (end &gt;= start)</span></div>
+              <div class="attr-row"><span class="attr-name">team1_id / team2_id</span><span class="badge badge-fk">FKs &rarr; team (t1 &ne; t2)</span></div>
+              <div class="attr-row"><span class="attr-name">fixture_date / venue_id</span><span class="attr-type">DATETIME / FK</span></div>
+              <div class="attr-row"><span class="attr-name">match_status</span><span class="attr-type">VARCHAR CHECK</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 6: ENTITY-RELATIONSHIP (ER) DIAGRAM -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">5.0 Entity-Relationship Diagram <span class="slide-title-accent">&bull; Conceptual Model</span></div>
+          <div class="slide-subtitle">Visualizing entities, attributes, primary/foreign keys, and cardinalities</div>
+        </div>
+        <div class="slide-tag">ER DIAGRAM</div>
+      </div>
+      <div class="slide-body">
+        <div class="er-diagram-wrapper">
+          <img src="er.jpeg" alt="Sports Club DBMS ER Diagram" class="er-diagram-img">
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 7: RELATIONAL SCHEMA & CARDINALITIES -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">6.0 Relational Schema <span class="slide-title-accent">&bull; Key Mappings</span></div>
+          <div class="slide-subtitle">Formal schema representation mapping primary keys, candidate keys, and foreign relationships</div>
+        </div>
+        <div class="slide-tag">RELATIONAL SCHEMA</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">📝 Formal Relational Notation (3NF)</div>
+            <div class="code-box">
+MEMBER (<u>member_id</u>, name, gender, phone, email, password, address, join_date, status)
+SPORT (<u>sport_id</u>, sport_name)
+MEMBERSHIP_PLAN (<u>plan_id</u>, plan_name, duration_months, fee_amount)
+FACILITY (<u>facility_id</u>, name, type, location, capacity, status)
+COACH (<u>coach_id</u>, name, phone, email)
+CLUB (<u>club_id</u>, club_name, created_date, status, <i>sport_id</i>, <i>coach_id</i>)
+CLUB_MEMBER (<u><i>member_id</i></u>, <u><i>club_id</i></u>, <u>role</u>, join_date)
+PAYMENT (<u>payment_id</u>, <i>member_id</i>, <i>plan_id</i>, amount, payment_mode, payment_date, status, transaction_ref)
+TRAINING_SESSION (<u>session_id</u>, session_date, start_time, end_time, capacity, status, <i>sport_id</i>, <i>coach_id</i>, <i>venue_id</i>)
+TEAM (<u>team_id</u>, team_name, created_date, status, <i>club_id</i>, <i>sport_id</i>, <i>coach_id</i>)
+TOURNAMENT (<u>tournament_id</u>, name, start_date, end_date, type, <i>sport_id</i>)
+FIXTURE (<u>fixture_id</u>, fixture_date, status, <i>tournament_id</i>, <i>team1_id</i>, <i>team2_id</i>, <i>venue_id</i>)
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔗 Cardinality &amp; Relationship Rules</div>
+            <div class="card-list">
+              <li><strong>MEMBER &harr; CLUB (N:M):</strong> An athlete can enroll in multiple clubs with distinct tactical roles; a club holds multiple athletes. Resolved by <code>CLUB_MEMBER</code>.</li>
+              <li><strong>MEMBER &harr; PAYMENT (1:N):</strong> An athlete performs multiple subscription transactions over time; each payment record belongs to exactly one athlete.</li>
+              <li><strong>SPORT &harr; CLUB (1:N):</strong> Each franchise is dedicated to one sport discipline; a sport hosts multiple competing clubs.</li>
+              <li><strong>FACILITY &harr; TRAINING_SESSION (1:N):</strong> A venue hosts multiple time slots sequentially; each session occupies one venue.</li>
+              <li><strong>TOURNAMENT &harr; FIXTURE (1:N):</strong> A tournament organizes a bracket of matches between competing squads <code>(team1_id &ne; team2_id)</code>.</li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 8: DATA DICTIONARY & TABLE SCHEMAS -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">7.0 Core Table Definitions <span class="slide-title-accent">&bull; Data Types &amp; Rules</span></div>
+          <div class="slide-subtitle">Physical schema attributes, domain types, constraints, and business rules across all relations</div>
+        </div>
+        <div class="slide-tag">DATA DICTIONARY</div>
+      </div>
+      <div class="slide-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 14%;">Table Name</th>
+                <th style="width: 16%;">Primary Key</th>
+                <th style="width: 18%;">Foreign Keys</th>
+                <th style="width: 25%;">Key Attributes &amp; Types</th>
+                <th style="width: 27%;">Integrity &amp; Business Rules</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong><code>member</code></strong></td>
+                <td><span class="badge badge-pk">member_id</span></td>
+                <td>—</td>
+                <td>name (VARCHAR), gender, phone, email (VARCHAR UNIQUE), password, status</td>
+                <td>CHECK (gender IN ('Male','Female')), CHECK (status IN ('Active','Expired','Pending','Suspended','Inactive'))</td>
+              </tr>
+              <tr>
+                <td><strong><code>membership_plan</code></strong></td>
+                <td><span class="badge badge-pk">plan_id</span></td>
+                <td>—</td>
+                <td>plan_name (VARCHAR), duration_months (INT), fee_amount (DECIMAL)</td>
+                <td>CHECK (duration_months &gt; 0), CHECK (fee_amount &gt;= 0)</td>
+              </tr>
+              <tr>
+                <td><strong><code>payment</code></strong></td>
+                <td><span class="badge badge-pk">payment_id</span></td>
+                <td><span class="badge badge-fk">member_id</span>, <span class="badge badge-fk">plan_id</span></td>
+                <td>amount (DECIMAL), payment_mode, payment_date, status, transaction_ref (UNIQUE)</td>
+                <td>CHECK (amount &gt; 0), CHECK (payment_mode IN ('UPI','Credit Card','Debit Card','Net Banking','Cash'))</td>
+              </tr>
+              <tr>
+                <td><strong><code>sport</code></strong></td>
+                <td><span class="badge badge-pk">sport_id</span></td>
+                <td>—</td>
+                <td>sport_name (VARCHAR UNIQUE)</td>
+                <td>Parent catalog for clubs, training sessions, and tournament categories</td>
+              </tr>
+              <tr>
+                <td><strong><code>coach</code></strong></td>
+                <td><span class="badge badge-pk">coach_id</span></td>
+                <td>—</td>
+                <td>name (VARCHAR), phone, email (VARCHAR UNIQUE)</td>
+                <td>Certified coach profile referenced by clubs, squads, and training sessions</td>
+              </tr>
+              <tr>
+                <td><strong><code>club</code></strong></td>
+                <td><span class="badge badge-pk">club_id</span></td>
+                <td><span class="badge badge-fk">sport_id</span>, <span class="badge badge-fk">coach_id</span></td>
+                <td>club_name (VARCHAR), created_date, status</td>
+                <td>Foreign key cascade protection; coach assignment validity</td>
+              </tr>
+              <tr>
+                <td><strong><code>club_member</code></strong></td>
+                <td><span class="badge badge-pk">(member_id, club_id, role)</span></td>
+                <td><span class="badge badge-fk">member_id</span>, <span class="badge badge-fk">club_id</span></td>
+                <td>role (VARCHAR), join_date (DATE)</td>
+                <td>Composite primary key prevents duplicate role registration within same franchise</td>
+              </tr>
+              <tr>
+                <td><strong><code>facility</code></strong></td>
+                <td><span class="badge badge-pk">facility_id</span></td>
+                <td>—</td>
+                <td>name, type, location, capacity (INT), status</td>
+                <td>CHECK (capacity &gt; 0), CHECK (status IN ('Available','Booked','Under Maintenance'))</td>
+              </tr>
+              <tr>
+                <td><strong><code>training_session</code></strong></td>
+                <td><span class="badge badge-pk">session_id</span></td>
+                <td><span class="badge badge-fk">sport_id</span>, <span class="badge badge-fk">coach_id</span>, <span class="badge badge-fk">venue_id</span></td>
+                <td>session_date, start_time, end_time, capacity, status</td>
+                <td>CHECK (end_time &gt; start_time), Automated venue overlap trigger enforcement</td>
+              </tr>
+              <tr>
+                <td><strong><code>team</code></strong></td>
+                <td><span class="badge badge-pk">team_id</span></td>
+                <td><span class="badge badge-fk">club_id</span>, <span class="badge badge-fk">sport_id</span>, <span class="badge badge-fk">coach_id</span></td>
+                <td>team_name (VARCHAR), created_date, status</td>
+                <td>Competitive tournament squad formed under sports clubs</td>
+              </tr>
+              <tr>
+                <td><strong><code>tournament</code></strong></td>
+                <td><span class="badge badge-pk">tournament_id</span></td>
+                <td><span class="badge badge-fk">sport_id</span></td>
+                <td>name (VARCHAR), start_date, end_date, type</td>
+                <td>CHECK (end_date &gt;= start_date), CHECK (type IN ('Knockout','Round Robin','League'))</td>
+              </tr>
+              <tr>
+                <td><strong><code>fixture</code></strong></td>
+                <td><span class="badge badge-pk">fixture_id</span></td>
+                <td><span class="badge badge-fk">tournament_id</span>, <span class="badge badge-fk">team1_id</span>, <span class="badge badge-fk">team2_id</span>, <span class="badge badge-fk">venue_id</span></td>
+                <td>fixture_date, status</td>
+                <td>CHECK (team1_id &lt;&gt; team2_id), Trigger validating teams match tournament sport</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 9: BUSINESS INTEGRITY & TRIGGERS -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">8.0 Database Integrity <span class="slide-title-accent">&bull; Triggers &amp; Constraints</span></div>
+          <div class="slide-subtitle">Active procedural integrity enforcement and ACID compliance rules</div>
+        </div>
+        <div class="slide-tag">INTEGRITY</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🛡️ Declarative Integrity Rules</div>
+            <div class="card-list">
+              <li><strong>Entity Integrity:</strong> Primary Keys enforce uniqueness on all entities (`member_id`, `club_id`, `payment_id`, `session_id`).</li>
+              <li><strong>Referential Integrity:</strong> Foreign Keys guarantee orphan-free child records with `ON DELETE RESTRICT / CASCADE`.</li>
+              <li><strong>Domain Constraints:</strong> Check conditions restrict values (e.g., `amount > 0`, `end_time > start_time`, valid payment modes).</li>
+              <li><strong>Unique Constraints:</strong> Prevents duplicate registration of emails (`member.email`, `coach.email`) and transaction reference numbers.</li>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">⚡ Procedural Trigger: Sport Validation</div>
+            <div class="code-box">
+-- Ensures competing squads participate in tournament sport
+CREATE TRIGGER trg_check_fixture_team_sport
+BEFORE INSERT ON fixture
+FOR EACH ROW
+BEGIN
+    SELECT CASE
+        WHEN (SELECT sport_id FROM team WHERE team_id = NEW.team1_id) &lt;&gt;
+             (SELECT sport_id FROM tournament WHERE tournament_id = NEW.tournament_id)
+        THEN RAISE(ABORT, 'Error: Team 1 sport mismatch!')
+        WHEN (SELECT sport_id FROM team WHERE team_id = NEW.team2_id) &lt;&gt;
+             (SELECT sport_id FROM tournament WHERE tournament_id = NEW.tournament_id)
+        THEN RAISE(ABORT, 'Error: Team 2 sport mismatch!')
+    END;
+END;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 10: CONCLUSION & SUMMARY -->
+    <!-- ===================================================================== -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div class="slide-title-group">
+          <div class="slide-title">9.0 Conclusion <span class="slide-title-accent">&bull; Phase 1 Summary</span></div>
+          <div class="slide-subtitle">Mathematical validation, normalization benefits, and upcoming full-stack milestones</div>
+        </div>
+        <div class="slide-tag">SUMMARY</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">✅ Phase 1 Accomplishments</div>
+            <div class="card-list">
+              <li><strong>Complete Conceptual Design:</strong> Comprehensive Entity-Relationship modeling covering 12 core athletic domains.</li>
+              <li><strong>Strict 3NF Normalization:</strong> Mathematical elimination of update, insertion, and deletion anomalies.</li>
+              <li><strong>Robust Constraint Architecture:</strong> Entity, Referential, and Trigger-based integrity guards implemented.</li>
+              <li><strong>Scalable Schema:</strong> Extensible structure accommodating multi-sport complexes, tournaments, and payment simulation.</li>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🚀 Roadmap &amp; Next Phase Milestones</div>
+            <div class="card-list">
+              <li><strong>Python REST API Backend:</strong> High-performance HTTP server handling authentication and query execution.</li>
+              <li><strong>Dual-Role Web Portals:</strong> Responsive Single-Page Applications for System Administrators and Athletes.</li>
+              <li><strong>Smart SQL Studio:</strong> Schema-aware Natural Language-to-SQL compiler with instant query profiling.</li>
+              <li><strong>Interactive Club Management:</strong> Real-time club enrollment, role switching, and payment processing.</li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Floating Navigation Controls -->
+  <div id="controls">
+    <button class="btn-nav" id="prev-btn" title="Previous Slide (Left Arrow)">◀ Prev</button>
+    <div id="slide-indicator">1 / 10</div>
+    <button class="btn-nav" id="next-btn" title="Next Slide (Right Arrow)">Next ▶</button>
+    <button class="btn-nav" id="fullscreen-btn" title="Toggle Fullscreen (F)">⛶ Fullscreen</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('slide-indicator');
+    const progressBar = document.getElementById('progress-bar');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((slide, i) => {
+        if (i + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      indicator.textContent = `${currentSlide} / ${totalSlides}`;
+      progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>
