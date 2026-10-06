@@ -2,7 +2,9 @@ import sqlite3
 import os
 import sys
 
-DB_FILE = os.path.join(os.path.dirname(__file__), "sports_club.db")
+BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR) if os.path.basename(BACKEND_DIR) == "backend" else BACKEND_DIR
+DB_FILE = os.path.join(PROJECT_ROOT, "sql", "sports_club.db")
 
 def print_table(cursor, title=None):
     if title:

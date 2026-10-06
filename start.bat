@@ -15,6 +15,5 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-python db_manager.py
-python app.py
+python backend/app.py
 pause

@@ -12,7 +12,9 @@ import webbrowser
 import threading
 
 PORT = 5000
-DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sports_club.db")
+BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR) if os.path.basename(BACKEND_DIR) == "backend" else BACKEND_DIR
+DB_FILE = os.path.join(PROJECT_ROOT, "sql", "sports_club.db")
 
 class DualStackServer(HTTPServer):
     """Dual-stack IPv4/IPv6 HTTP Server for seamless Windows localhost resolution."""
@@ -251,6 +253,25 @@ class DBMSRequestHandler(SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.end_headers()
+
+    def translate_path(self, path):
+        parsed = urllib.parse.urlparse(path)
+        clean_path = urllib.parse.unquote(parsed.path)
+        if clean_path in ("/", "", "/index.html"):
+            return os.path.join(PROJECT_ROOT, "frontend", "index.html")
+        
+        rel_path = clean_path.lstrip("/").replace("/", os.sep)
+        candidate_paths = [
+            os.path.join(PROJECT_ROOT, rel_path),
+            os.path.join(PROJECT_ROOT, "frontend", rel_path),
+            os.path.join(PROJECT_ROOT, "presentation", rel_path),
+            os.path.join(PROJECT_ROOT, "reports", rel_path),
+            os.path.join(PROJECT_ROOT, "sql", rel_path),
+        ]
+        for c in candidate_paths:
+            if os.path.exists(c):
+                return c
+        return os.path.join(PROJECT_ROOT, "frontend", rel_path)
 
     # ---- Routing ----
     def do_GET(self):

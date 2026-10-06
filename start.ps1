@@ -15,8 +15,5 @@ if (-not $pythonCmd) {
     exit 1
 }
 
-Write-Host "[1/2] Checking and initializing database..." -ForegroundColor Yellow
-python "$PSScriptRoot\db_manager.py"
-
-Write-Host "`n[2/2] Starting local web server on http://localhost:5000..." -ForegroundColor Green
-python "$PSScriptRoot\app.py"
+Write-Host "[1/1] Launching Sports Club DBMS Web Application on http://localhost:5000..." -ForegroundColor Green
+python "$PSScriptRoot\backend\app.py"

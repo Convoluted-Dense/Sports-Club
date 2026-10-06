@@ -96,13 +96,13 @@ The Sports Club Management System manages operations across multiple athletic di
 
 ## Setup and Execution
 
-### Running the Application (SQLite / Zero Config)
+### Option A: Running the Application (SQLite / Zero Config)
 Double-click `start.bat` (Windows) or run in terminal:
 
 ```bash
-python app.py
+python backend/app.py
 ```
-*The server initializes `sports_club.db` automatically and opens [http://127.0.0.1:5000](http://127.0.0.1:5000)*.
+*The server initializes `sql/sports_club.db` automatically and opens [http://127.0.0.1:5000](http://127.0.0.1:5000)*.
 
 #### Default Demo Logins
 - **Administrator**: `Admin` / `Admin`
@@ -110,35 +110,53 @@ python app.py
 
 ---
 
-### PostgreSQL Setup
+### Option B: PostgreSQL Setup
 If using PostgreSQL:
 
 ```powershell
-.\setup_database.ps1
+.\sql\setup_database.ps1
 ```
 
 Or manually using `psql`:
 ```cmd
 psql -U postgres -d postgres -c "CREATE DATABASE sports_club_db;"
-psql -U postgres -d sports_club_db -f schema.sql
-psql -U postgres -d sports_club_db -f populate_data.sql
+psql -U postgres -d sports_club_db -f sql/schema.sql
+psql -U postgres -d sports_club_db -f sql/populate_data.sql
 ```
 
 ---
 
-## Repository Files
+## Repository Organization
 
 ```
-├── app.py                 # Backend REST API server and static host
-├── index.html             # Single-Page Web Application (Admin Dashboard & Member Portal)
-├── db_manager.py          # Database initializer and SQLite setup
-├── schema.sql             # 3NF relational schema DDL (12 tables, views, triggers)
-├── populate_data.sql      # Dataset and seed fixtures
-├── queries.sql            # 10 advanced DBMS SQL queries
-├── er_diagram.html        # Interactive visual ER diagram
-├── er.jpeg                # ER diagram image
-├── presentation.html      # Interactive slide presentation
-├── cli.py                 # Terminal CLI tool
-├── start.bat / start.ps1  # Launcher scripts
-└── README.md              # Documentation and database schema dictionary
+Sports-Club/
+├── backend/
+│   ├── app.py                 # REST API server & multi-directory static host
+│   ├── db_manager.py          # Database builder & SQLite initializer
+│   └── cli.py                 # Interactive terminal CLI tool
+├── frontend/
+│   ├── index.html             # Single-Page Web App (Admin Cockpit & Member Portal)
+│   ├── er_diagram.html        # Interactive visual ER diagram studio
+│   └── er.jpeg                # High-definition ER diagram graphic
+├── sql/
+│   ├── schema.sql             # 3NF relational schema DDL (12 tables, views, triggers)
+│   ├── populate_data.sql      # Mock dataset and seed fixtures
+│   ├── queries.sql            # 10 advanced analytical DBMS SQL queries
+│   ├── sports_club.db         # SQLite relational database instance
+│   └── setup_database.ps1     # Automated PostgreSQL setup script
+├── presentation/
+│   ├── presentation.html      # Interactive slide presentation deck
+│   ├── presentation2.pdf      # High-definition widescreen slide deck PDF
+│   ├── presentation_print.html # Print template
+│   ├── convert_presentation_to_pdf.py # Conversion utility
+│   └── presentation_slides/   # 12 Slide PNG screenshots
+├── reports/
+│   ├── Sports_Club_DBMS_Project_Report.pdf # Academic Project Report (A4 PDF)
+│   ├── project_report.html    # Academic Project Report HTML source
+│   ├── build_report.py        # Report builder & PDF compiler
+│   └── report_assets/         # High-resolution UI screenshots
+├── .gitignore                 # Git ignore rules
+├── start.bat                  # Windows batch launcher
+├── start.ps1                  # PowerShell launcher
+└── README.md                  # Documentation and database schema dictionary
 ```
